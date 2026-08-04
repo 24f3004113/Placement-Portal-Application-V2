@@ -31,3 +31,22 @@ class Company(db.Model):
     blacklisted = db.Column(db.Boolean, default=False)
 
     user = db.relationship("User", backref=db.backref("company", uselist=False))
+
+
+class Student(db.Model):
+
+    __tablename__ = "student"
+
+    sid = db.Column(db.Integer, primary_key=True)
+    user_id = db.Column(db.Integer, db.ForeignKey("user.uid"), unique=True, nullable=False)
+    name = db.Column(db.String(100), nullable=False)
+    phone = db.Column(db.String(15))
+    branch = db.Column(db.String(50))
+    cgpa = db.Column(db.Float)
+    graduation_year = db.Column(db.Integer)
+    skills = db.Column(db.String(300))
+    resume = db.Column(db.String(200))
+    blacklisted = db.Column(db.Boolean, default=False)
+
+    user = db.relationship("User", backref=db.backref("student", uselist=False))
+
