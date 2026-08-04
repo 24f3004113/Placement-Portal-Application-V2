@@ -98,5 +98,7 @@ class Interview(db.Model):
     interview_link = db.Column(db.String(300))
     interview_location = db.Column(db.String(200))
     remarks = db.Column(db.Text)
+    
+    application = db.relationship("Application",backref=db.backref("interview", uselist=False))
 
 
