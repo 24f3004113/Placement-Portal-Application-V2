@@ -51,6 +51,8 @@ class Student(db.Model):
     blacklisted = db.Column(db.Boolean, default=False)
 
     user = db.relationship("User", backref=db.backref("student", uselist=False))
+    applications = db.relationship("Application", backref="student")
+    placements = db.relationship("Placement", backref="student")
 
 
 class Drive(db.Model):
