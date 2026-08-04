@@ -70,6 +70,9 @@ class Drive(db.Model):
     application_deadline = db.Column(db.Date)
     approved = db.Column(db.Boolean, default=False)
     status = db.Column(db.String(20), default="Open")
+    
+    applications = db.relationship("Application", backref="drive")
+    placements = db.relationship("Placement", backref="drive")
 
 class Placement(db.Model):
 
