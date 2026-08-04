@@ -67,5 +67,15 @@ class Drive(db.Model):
     approved = db.Column(db.Boolean, default=False)
     status = db.Column(db.String(20), default="Open")
 
+class Placement(db.Model):
 
+    __tablename__ = "placement"
+
+    pid = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("student.sid"), nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey("company.cid"), nullable=False)
+    drive_id = db.Column(db.Integer, db.ForeignKey("drive.did"), nullable=False)
+    position = db.Column(db.String(100))
+    salary = db.Column(db.Integer)
+    joining_date = db.Column(db.Date)
 
