@@ -79,3 +79,17 @@ class Placement(db.Model):
     salary = db.Column(db.Integer)
     joining_date = db.Column(db.Date)
 
+class Interview(db.Model):
+
+    __tablename__ = "interview"
+
+    iid = db.Column(db.Integer, primary_key=True)
+    application_id = db.Column(db.Integer, db.ForeignKey("application.aid"), unique=True, nullable=False)
+    interview_date = db.Column(db.Date)
+    interview_time = db.Column(db.Time)
+    interview_mode = db.Column(db.String(20))
+    interview_link = db.Column(db.String(300))
+    interview_location = db.Column(db.String(200))
+    remarks = db.Column(db.Text)
+
+
