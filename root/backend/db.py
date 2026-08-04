@@ -50,3 +50,22 @@ class Student(db.Model):
 
     user = db.relationship("User", backref=db.backref("student", uselist=False))
 
+
+class Drive(db.Model):
+
+    __tablename__ = "drive"
+
+    did = db.Column(db.Integer, primary_key=True)
+    company_id = db.Column(db.Integer, db.ForeignKey("company.cid"), nullable=False)
+    job_title = db.Column(db.String(100), nullable=False)
+    description = db.Column(db.Text)
+    branch = db.Column(db.String(50))
+    min_cgpa = db.Column(db.Float)
+    graduation_year = db.Column(db.Integer)
+    salary = db.Column(db.Integer)
+    application_deadline = db.Column(db.Date)
+    approved = db.Column(db.Boolean, default=False)
+    status = db.Column(db.String(20), default="Open")
+
+
+
