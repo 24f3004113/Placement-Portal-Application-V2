@@ -83,3 +83,43 @@ def create_drive():
     db.session.commit()
     
     return jsonify({"message": "Placement Drive Created Successfully."}), 201
+
+@company.route("/company/drive/<int:did>/applications", methods=["GET"])
+def drive_applications(did):
+    
+    if "uid" not in session or session["role"] != "company":
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    company = Company.query.filter_by(user_id=session["uid"]).first()
+    
+    if company is None:
+        return jsonify({"message": "Company Not Found"}), 404
+    
+    drive = Drive.query.filter_by(did=did,company_id=company.cid).first()
+    
+    if drive is None:
+        return jsonify({"message": "Drive Not Found"}), 404
+    
+    applications = Application.query.filter_by(drive_id=did).all()
+    
+    data = []
+    
+    for application in applications:
+        
+        data.append({
+            "aid": application.aid,
+            "student_id": application.student.sid,
+            "student_name": application.student.name,
+            "email": application.student.user.email,
+            "phone": application.student.phone,
+            "course": application.student.course,
+            "cgpa": application.student.cgpa,
+            "application_date": application.application_date,
+            "status": application.status
+        })
+        
+    return jsonify({
+        "company": company.company_name,
+        "drive": drive.job_title,
+        "applications": data
+    }), 200
