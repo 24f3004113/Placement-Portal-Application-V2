@@ -74,6 +74,16 @@ class Drive(db.Model):
     applications = db.relationship("Application", backref="drive")
     placements = db.relationship("Placement", backref="drive")
 
+class Application(db.Model):
+
+    __tablename__ = "application"
+
+    aid = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("student.sid"), nullable=False)
+    drive_id = db.Column(db.Integer, db.ForeignKey("drive.did"), nullable=False)
+    application_date = db.Column(db.Date, default=date.today)
+    status = db.Column(db.String(30), default="Applied")
+
 class Placement(db.Model):
 
     __tablename__ = "placement"
