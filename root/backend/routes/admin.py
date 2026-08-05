@@ -108,3 +108,20 @@ def approve_company(cid):
     db.session.commit()
     
     return jsonify({"message": "Company Approved Successfully"}), 200
+
+@admin.route("/admin/company/<int:cid>/blacklist", methods=["PUT"])
+def blacklist_company(cid):
+    
+    if "uid" not in session or session["role"] != "admin":
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    company = Company.query.get(cid)
+    
+    if company is None:
+        return jsonify({"message": "Company Not Found"}), 404
+    
+    company.blacklisted = True
+    
+    db.session.commit()
+    
+    return jsonify({"message": "Company Blacklisted Successfully"}), 200
