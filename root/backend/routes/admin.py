@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, session
-from db import User, Company, Student, Drive, Application
+from db import db, User, Company, Student, Drive, Application
 
 admin = Blueprint("admin", __name__)
 
@@ -91,3 +91,20 @@ def pending_companies():
         })
         
     return jsonify(data), 200
+
+@admin.route("/admin/company/<int:cid>/approve", methods=["PUT"])
+def approve_company(cid):
+    
+    if "uid" not in session or session["role"] != "admin":
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    company = Company.query.get(cid)
+    
+    if company is None:
+        return jsonify({"message": "Company Not Found"}), 404
+    
+    company.approved = True
+    
+    db.session.commit()
+    
+    return jsonify({"message": "Company Approved Successfully"}), 200
