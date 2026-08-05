@@ -27,9 +27,12 @@ def user_login():
     elif user.role == "company":
         company = Company.query.filter_by(user_id=user.uid).first()
         
-        if not company.approved:
-            return jsonify({"message": "Company approval pending."}), 403
+        if company.approval_status == "Pending":
+            return jsonify({"message": "Company Approval Pending."}), 403
         
+        if company.approval_status == "Rejected":
+            return jsonify({"message": "Company Registration Rejected."}), 403
+            
         if company.blacklisted:
             return jsonify({"message": "Company account is blacklisted."}), 403
         
