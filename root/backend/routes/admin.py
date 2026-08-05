@@ -185,6 +185,37 @@ def all_drives():
         
     return jsonify(data), 200
 
+@admin.route("/admin/company/<int:cid>/drives", methods=["GET"])
+def company_drives(cid):
+    
+    if "uid" not in session or session["role"] != "admin":
+        return jsonify({"message": "Unauthorized"}), 401
+        
+    company = Company.query.get(cid)
+    
+    if company is None:
+        return jsonify({"message": "Company Not Found"}), 404
+    drives = Drive.query.filter_by(company_id=cid).all()
+    
+    data = []
+    
+    for drive in drives:
+        data.append({
+            "did": drive.did,
+            "job_title": drive.job_title,
+            "course": drive.course,
+            "min_cgpa": drive.min_cgpa,
+            "salary": drive.salary,
+            "application_deadline": drive.application_deadline,
+            "approval_status": drive.approval_status,
+            "status": drive.status
+        })
+        
+    return jsonify({
+        "company": company.company_name,
+        "drives": data
+    }), 200
+
 @admin.route("/admin/drive/<int:did>/applications", methods=["GET"])
 def drive_applications(did):
     
