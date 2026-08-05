@@ -64,7 +64,7 @@ def all_companies():
             "location": company.location,
             "hr_contact": company.hr_contact,
             "website": company.website,
-            "approved": company.approved,
+            "approval_status": company.approval_status,
             "blacklisted": company.blacklisted
         })
         
@@ -76,7 +76,7 @@ def pending_companies():
     if "uid" not in session or session["role"] != "admin":
         return jsonify({"message": "Unauthorized"}), 401
         
-    companies = Company.query.filter_by(approved=False).all()
+    companies = Company.query.filter_by(approval_status="Pending").all()
     
     data = []
     
@@ -103,11 +103,28 @@ def approve_company(cid):
     if company is None:
         return jsonify({"message": "Company Not Found"}), 404
     
-    company.approved = True
+    company.approval_status = "Approved"
     
     db.session.commit()
     
     return jsonify({"message": "Company Approved Successfully"}), 200
+
+@admin.route("/admin/company/<int:cid>/reject", methods=["PUT"])
+def reject_company(cid):
+    
+    if "uid" not in session or session["role"] != "admin":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    company = Company.query.get(cid)
+    
+    if company is None:
+        return jsonify({"message":"Company Not Found"}),404
+    
+    company.approval_status = "Rejected"
+    
+    db.session.commit()
+    
+    return jsonify({"message":"Company Rejected Successfully"}),200
 
 @admin.route("/admin/company/<int:cid>/blacklist", methods=["PUT"])
 def blacklist_company(cid):
