@@ -159,3 +159,61 @@ def unblacklist_company(cid):
     db.session.commit()
     
     return jsonify({"message": "Company Unblacklisted Successfully"}), 200
+
+@admin.route("/admin/drives", methods=["GET"])
+def all_drives():
+    
+    if "uid" not in session or session["role"] != "admin":
+        return jsonify({"message": "Unauthorized"}), 401
+        
+    drives = Drive.query.all()
+    
+    data = []
+    
+    for drive in drives:
+        data.append({
+            "did": drive.did,
+            "company": drive.company.company_name,
+            "job_title": drive.job_title,
+            "course": drive.course,
+            "min_cgpa": drive.min_cgpa,
+            "salary": drive.salary,
+            "application_deadline": drive.application_deadline,
+            "approval_status": drive.approval_status,
+            "status": drive.status
+        })
+        
+    return jsonify(data), 200
+
+@admin.route("/admin/drive/<int:did>/applications", methods=["GET"])
+def drive_applications(did):
+    
+    if "uid" not in session or session["role"] != "admin":
+        return jsonify({"message": "Unauthorized"}), 401
+        
+    drive = Drive.query.get(did)
+    
+    if drive is None:
+        return jsonify({"message": "Drive Not Found"}), 404
+        
+    applications = Application.query.filter_by(drive_id=did).all()
+    
+    data = []
+    
+    for application in applications:
+        data.append({
+            "aid": application.aid,
+            "student": application.student.name,
+            "email": application.student.user.email,
+            "phone": application.student.phone,
+            "course": application.student.course,
+            "cgpa": application.student.cgpa,
+            "application_date": application.application_date,
+            "status": application.status
+        })
+        
+    return jsonify({
+        "drive": drive.job_title,
+        "company": drive.company.company_name,
+        "applications": data
+    }), 200
