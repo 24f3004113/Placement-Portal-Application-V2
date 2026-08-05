@@ -57,3 +57,13 @@ def user_login():
         session["role"] = "student"
 
         return jsonify({"message": "Student Login Successful"}), 200
+
+
+@login.route("/logout")
+def logout():
+
+    session.clear()
+
+    return jsonify({
+        "message": "Logout Successful"
+    })
