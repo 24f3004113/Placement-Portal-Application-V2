@@ -27,7 +27,7 @@ class Company(db.Model):
     location = db.Column(db.String(100))
     hr_contact = db.Column(db.String(100))
     website = db.Column(db.String(200))
-    approved = db.Column(db.Boolean, default=False)
+    approval_status = db.Column(db.String(20), default="Pending")
     blacklisted = db.Column(db.Boolean, default=False)
 
     user = db.relationship("User", backref=db.backref("company", uselist=False))
@@ -68,7 +68,7 @@ class Drive(db.Model):
     graduation_year = db.Column(db.Integer)
     salary = db.Column(db.Integer)
     application_deadline = db.Column(db.Date)
-    approved = db.Column(db.Boolean, default=False)
+    approval_status = db.Column(db.String(20), default="Pending")
     status = db.Column(db.String(20), default="Open")
     
     applications = db.relationship("Application", backref="drive")
