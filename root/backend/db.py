@@ -5,21 +5,21 @@ db = SQLAlchemy()
 
 
 class User(db.Model):
-
+    
     __tablename__ = "user"
-
+    
     uid = db.Column(db.Integer, primary_key=True)
     email = db.Column(db.String(100), unique=True, nullable=False)
     password = db.Column(db.String(100), nullable=False)
-
+    
     # admin / company / student
     role = db.Column(db.String(20), nullable=False)
 
 
 class Company(db.Model):
-
+    
     __tablename__ = "company"
-
+    
     cid = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.uid"), unique=True, nullable=False)
     company_name = db.Column(db.String(100), nullable=False)
@@ -36,9 +36,9 @@ class Company(db.Model):
 
 
 class Student(db.Model):
-
+    
     __tablename__ = "student"
-
+    
     sid = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey("user.uid"), unique=True, nullable=False)
     name = db.Column(db.String(100), nullable=False)
@@ -49,16 +49,16 @@ class Student(db.Model):
     skills = db.Column(db.String(300))
     resume = db.Column(db.String(200))
     blacklisted = db.Column(db.Boolean, default=False)
-
+    
     user = db.relationship("User", backref=db.backref("student", uselist=False))
     applications = db.relationship("Application", backref="student")
     placements = db.relationship("Placement", backref="student")
 
 
 class Drive(db.Model):
-
+    
     __tablename__ = "drive"
-
+    
     did = db.Column(db.Integer, primary_key=True)
     company_id = db.Column(db.Integer, db.ForeignKey("company.cid"), nullable=False)
     job_title = db.Column(db.String(100), nullable=False)
@@ -75,9 +75,9 @@ class Drive(db.Model):
     placements = db.relationship("Placement", backref="drive")
 
 class Application(db.Model):
-
+    
     __tablename__ = "application"
-
+    
     aid = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey("student.sid"), nullable=False)
     drive_id = db.Column(db.Integer, db.ForeignKey("drive.did"), nullable=False)
@@ -85,9 +85,9 @@ class Application(db.Model):
     status = db.Column(db.String(30), default="Applied")
 
 class Placement(db.Model):
-
+    
     __tablename__ = "placement"
-
+    
     pid = db.Column(db.Integer, primary_key=True)
     student_id = db.Column(db.Integer, db.ForeignKey("student.sid"), nullable=False)
     company_id = db.Column(db.Integer, db.ForeignKey("company.cid"), nullable=False)
@@ -97,9 +97,9 @@ class Placement(db.Model):
     joining_date = db.Column(db.Date)
 
 class Interview(db.Model):
-
+    
     __tablename__ = "interview"
-
+    
     iid = db.Column(db.Integer, primary_key=True)
     application_id = db.Column(db.Integer, db.ForeignKey("application.aid"), unique=True, nullable=False)
     interview_date = db.Column(db.Date)

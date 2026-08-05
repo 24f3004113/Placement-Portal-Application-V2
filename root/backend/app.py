@@ -10,19 +10,21 @@ app.secret_key = "lokaproject"
 db.init_app(app)
 
 with app.app_context():
-
     db.create_all()
-
+    
     admin = User.query.filter_by(role="admin").first()
-
+    
     if admin is None:
-
         admin = User(email="admin@placement.com",password="admin123",role="admin")
-
+        
         db.session.add(admin)
         db.session.commit()
 
 
-if __name__ == "__main__":
+app.route("/")
+def home():
+    return "Placement Portal"
 
+
+if __name__ == "__main__":
     app.run(debug=True)
