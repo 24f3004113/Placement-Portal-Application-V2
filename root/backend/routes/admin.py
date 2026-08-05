@@ -70,3 +70,24 @@ def all_companies():
         
     return jsonify(data), 200
 
+@admin.route("/admin/company/pending", methods=["GET"])
+def pending_companies():
+    
+    if "uid" not in session or session["role"] != "admin":
+        return jsonify({"message": "Unauthorized"}), 401
+        
+    companies = Company.query.filter_by(approved=False).all()
+    
+    data = []
+    
+    for company in companies:
+        data.append({
+            "cid": company.cid,
+            "company_name": company.company_name,
+            "industry": company.industry,
+            "location": company.location,
+            "hr_contact": company.hr_contact,
+            "website": company.website
+        })
+        
+    return jsonify(data), 200
