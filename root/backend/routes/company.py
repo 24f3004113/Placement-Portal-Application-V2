@@ -1,4 +1,4 @@
-from flask import Blueprint, jsonify, session
+from flask import Blueprint, jsonify, session, request
 from db import db, Company, Drive, Application, Placement
 
 company = Blueprint("company", __name__)
@@ -54,3 +54,32 @@ def company_dashboard():
         
         "drives": data
     }), 200
+
+@company.route("/company/create_drive", methods=["POST"])
+def create_drive():
+    
+    if "uid" not in session or session["role"] != "company":
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    company = Company.query.filter_by(user_id=session["uid"]).first()
+    
+    if company is None:
+        return jsonify({"message": "Company Not Found"}), 404
+        
+    data = request.get_json()
+    
+    drive = Drive(
+        company_id=company.cid,
+        job_title=data.get("job_title"),
+        description=data.get("description"),
+        course=data.get("course"),
+        min_cgpa=data.get("min_cgpa"),
+        graduation_year=data.get("graduation_year"),
+        salary=data.get("salary"),
+        application_deadline=data.get("application_deadline")
+    )
+    
+    db.session.add(drive)
+    db.session.commit()
+    
+    return jsonify({"message": "Placement Drive Created Successfully."}), 201
