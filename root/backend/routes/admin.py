@@ -46,3 +46,27 @@ def all_students():
         
     return jsonify(data), 200
 
+@admin.route("/admin/companies", methods=["GET"])
+def all_companies():
+    if "uid" not in session or session["role"] != "admin":
+        return jsonify({"message": "Unauthorized"}), 401
+        
+    companies = Company.query.all()
+    
+    data = []
+    
+    for company in companies:
+        data.append({
+            "cid": company.cid,
+            "company_name": company.company_name,
+            "email": company.user.email,
+            "industry": company.industry,
+            "location": company.location,
+            "hr_contact": company.hr_contact,
+            "website": company.website,
+            "approved": company.approved,
+            "blacklisted": company.blacklisted
+        })
+        
+    return jsonify(data), 200
+
