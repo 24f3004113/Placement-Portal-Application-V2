@@ -20,4 +20,29 @@ def admin_dashboard():
         "drives": drives,
         "applications": applications
     }), 200
+    
+@admin.route("/admin/students", methods=["GET"])
+def all_students():
+    
+    if "uid" not in session or session["role"] != "admin":
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    students = Student.query.all()
+    
+    data = []
+    
+    for student in students:
+        data.append({
+            "sid": student.sid,
+            "name": student.name,
+            "email": student.user.email,
+            "phone": student.phone,
+            "course": student.course,
+            "cgpa": student.cgpa,
+            "graduation_year": student.graduation_year,
+            "skills": student.skills,
+            "blacklisted": student.blacklisted
+        })
+        
+    return jsonify(data), 200
 
