@@ -37,3 +37,21 @@ def dashboard():
         "available_drives": available_drives
     }),200
 
+@student.route("/student/drive/<int:did>", methods=["GET"])
+def drive_details(did):
+    
+    drive=Drive.query.get(did)
+    
+    if drive is None:
+        return jsonify({"message":"Drive Not Found"}),404
+
+    return jsonify({
+        "company":drive.company.company_name,
+        "job_title":drive.job_title,
+        "description":drive.description,
+        "course":drive.course,
+        "min_cgpa":drive.min_cgpa,
+        "graduation_year":drive.graduation_year,
+        "salary":drive.salary,
+        "deadline":drive.application_deadline
+    }),200
