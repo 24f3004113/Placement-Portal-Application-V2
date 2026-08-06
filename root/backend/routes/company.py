@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, session, request
-from db import db, Company, Drive, Application
+from db import db, Company, Drive, Application, Interview
 
 company = Blueprint("company", __name__)
 
@@ -198,3 +198,36 @@ def update_application(aid):
     db.session.commit()
     
     return jsonify({"message":"Application Updated Successfully"}),200
+
+@company.route("/company/application/<int:aid>/interview", methods=["POST"])
+def schedule_interview(aid):
+    
+    if "uid" not in session or session["role"] != "company":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    company = Company.query.filter_by(user_id=session["uid"]).first()
+    
+    application = Application.query.get(aid)
+    
+    if application is None or application.drive.company_id != company.cid:
+        return jsonify({"message":"Application Not Found"}),404
+    
+    data = request.get_json()
+    
+    interview = Interview(
+        application_id=aid,
+        interview_date=data.get("interview_date"),
+        interview_time=data.get("interview_time"),
+        interview_mode=data.get("interview_mode"),
+        interview_link=data.get("interview_link"),
+        interview_location=data.get("interview_location"),
+        remarks=data.get("remarks")
+    )
+    
+    db.session.add(interview)
+    
+    application.status = "Interview"
+    
+    db.session.commit()
+    
+    return jsonify({"message":"Interview Scheduled Successfully"}),201
