@@ -64,8 +64,19 @@ def all_students():
 def all_companies():
     if "uid" not in session or session["role"] != "admin":
         return jsonify({"message": "Unauthorized"}), 401
-        
-    companies = Company.query.all()
+    
+    search = request.args.get("search", "")
+    
+    if search:
+        companies = Company.query.join(User).filter(
+            or_(
+                Company.company_name.contains(search),
+                User.email.contains(search),
+                Company.industry.contains(search)
+            )
+        ).all()
+    else:
+        companies = Company.query.all()
     
     data = []
     
