@@ -1,4 +1,5 @@
 from flask import Blueprint, jsonify, request, session
+from sqlalchemy import or_
 from datetime import date
 from db import db, Student, Company, Drive, Application, Interview, Placement
 
@@ -14,7 +15,20 @@ def dashboard():
     
     available_drives = []
     
-    drives = Drive.query.filter_by(approval_status="Approved", status="Open").all()
+    search = request.args.get("search", "")
+
+    if search:
+        drives = Drive.query.join(Company).filter(
+            Drive.approval_status=="Approved",
+            Drive.status=="Open",
+            or_(
+                Company.company_name.contains(search),
+                Drive.job_title.contains(search),
+                Drive.description.contains(search)
+            )
+        ).all()
+    else:
+        drives = Drive.query.filter_by(approval_status="Approved", status="Open").all()
     
     for drive in drives:
         
