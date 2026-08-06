@@ -1,4 +1,4 @@
-from flask import Flask
+from flask import Flask, Blueprint
 from db import db, User, Company, Student, Drive, Application, Placement
 
 app = Flask(__name__)
@@ -19,6 +19,20 @@ with app.app_context():
         
         db.session.add(admin)
         db.session.commit()
+
+from routes.reg import reg
+app.register_blueprint(reg)
+
+from routes.login import login
+app.register_blueprint(login)
+
+from routes.admin import admin
+app.register_blueprint(admin)
+
+from routes.company import company
+app.register_blueprint(company)
+
+
 
 
 app.route("/")
