@@ -191,7 +191,19 @@ def all_drives():
     if "uid" not in session or session["role"] != "admin":
         return jsonify({"message": "Unauthorized"}), 401
         
-    drives = Drive.query.all()
+    search = request.args.get("search", "")
+    
+    if search:
+        drives = Drive.query.join(Company).filter(
+            or_(
+                Company.company_name.contains(search),
+                Drive.job_title.contains(search),
+                Drive.course.contains(search)
+            )
+        ).all()
+    else:
+        drives = Drive.query.all()
+        
     
     data = []
     
