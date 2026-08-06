@@ -212,6 +212,9 @@ def schedule_interview(aid):
     if application is None or application.drive.company_id != company.cid:
         return jsonify({"message":"Application Not Found"}),404
     
+    if application.status != "Shortlisted":
+        return jsonify({"message": "Only shortlisted students can be scheduled for interview."}), 400
+    
     data = request.get_json()
     
     interview = Interview(
