@@ -1,5 +1,5 @@
 from flask import Flask, Blueprint
-from db import db, User, Company, Student, Drive, Application, Placement
+from db import db, User, Company, Student, Drive, Application
 
 app = Flask(__name__)
 
@@ -35,7 +35,7 @@ app.register_blueprint(company)
 
 
 
-app.route("/")
+@app.route("/")
 def home():
     return "Placement Portal"
 
