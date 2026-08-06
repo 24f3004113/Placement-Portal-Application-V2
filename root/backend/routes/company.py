@@ -179,3 +179,22 @@ def student_profile(aid):
         "skills": student.skills,
         "resume": student.resume
     }), 200
+    
+@company.route("/company/application/<int:aid>/update", methods=["PUT"])
+def update_application(aid):
+    
+    if "uid" not in session or session["role"] != "company":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    company = Company.query.filter_by(user_id=session["uid"]).first()
+    
+    application = Application.query.get(aid)
+    
+    if application is None or application.drive.company_id != company.cid:
+        return jsonify({"message":"Application Not Found"}),404
+    
+    application.status = request.get_json().get("status", application.status)
+    
+    db.session.commit()
+    
+    return jsonify({"message":"Application Updated Successfully"}),200
