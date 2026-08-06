@@ -40,7 +40,7 @@ def dashboard():
 @student.route("/student/drive/<int:did>", methods=["GET"])
 def drive_details(did):
     
-    drive=Drive.query.get(did)
+    drive = Drive.query.get(did)
     
     if drive is None:
         return jsonify({"message":"Drive Not Found"}),404
@@ -78,9 +78,31 @@ def apply(did):
     if Application.query.filter_by(student_id=student.sid,drive_id=did).first():
         return jsonify({"message":"Already Applied"}),400
     
-    application=Application(student_id=student.sid,drive_id=did)
+    application = Application(student_id=student.sid,drive_id=did)
     
     db.session.add(application)
     db.session.commit()
     
     return jsonify({"message":"Applied Successfully"}),201
+
+
+@student.route("/student/applications", methods=["GET"])
+def applications():
+
+    if "uid" not in session or session["role"]!="student":
+        return jsonify({"message":"Unauthorized"}),401
+
+    student = Student.query.filter_by(user_id=session["uid"]).first()
+
+    data=[]
+    for application in Application.query.filter_by(student_id=student.sid).all():
+        data.append({
+            "company":application.drive.company.company_name,
+            "job_title":application.drive.job_title,
+            "application_date":application.application_date,
+            "status":application.status,
+            "feedback":application.feedback
+        })
+
+    return jsonify(data),200
+
