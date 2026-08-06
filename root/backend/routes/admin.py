@@ -1,4 +1,5 @@
-from flask import Blueprint, jsonify, session
+from flask import Blueprint, jsonify, session, request
+from sqlalchemy import or_
 from db import db, User, Company, Student, Drive, Application
 
 admin = Blueprint("admin", __name__)
@@ -27,8 +28,21 @@ def all_students():
     if "uid" not in session or session["role"] != "admin":
         return jsonify({"message": "Unauthorized"}), 401
     
-    students = Student.query.all()
-    
+    search = request.args.get("search", "")
+
+    if search:
+
+        students = Student.query.join(User).filter(
+            or_(
+                Student.name.contains(search),
+                User.email.contains(search),
+                Student.course.contains(search)
+            )
+        ).all()
+
+    else:
+        students = Student.query.all()
+
     data = []
     
     for student in students:
