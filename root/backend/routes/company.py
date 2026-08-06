@@ -238,3 +238,29 @@ def schedule_interview(aid):
     db.session.commit()
     
     return jsonify({"message":"Interview Scheduled Successfully"}),201
+
+@company.route("/company/interview/<int:iid>/update", methods=["PUT"])
+def update_interview(iid):
+    
+    if "uid" not in session or session["role"] != "company":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    company = Company.query.filter_by(user_id=session["uid"]).first()
+    
+    interview = Interview.query.get(iid)
+    
+    if interview is None or interview.application.drive.company_id != company.cid:
+        return jsonify({"message":"Interview Not Found"}),404
+    
+    data = request.get_json()
+    
+    interview.interview_date = data.get("interview_date", interview.interview_date)
+    interview.interview_time = data.get("interview_time", interview.interview_time)
+    interview.interview_mode = data.get("interview_mode", interview.interview_mode)
+    interview.interview_link = data.get("interview_link", interview.interview_link)
+    interview.interview_location = data.get("interview_location", interview.interview_location)
+    interview.remarks = data.get("remarks", interview.remarks)
+    
+    db.session.commit()
+    
+    return jsonify({"message":"Interview Updated Successfully"}),200
