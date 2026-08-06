@@ -123,3 +123,33 @@ def drive_applications(did):
         "drive": drive.job_title,
         "applications": data
     }), 200
+
+@company.route("/company/application/<int:aid>/student", methods=["GET"])
+def student_profile(aid):
+    
+    if "uid" not in session or session["role"] != "company":
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    company = Company.query.filter_by(user_id=session["uid"]).first()
+    
+    application = Application.query.get(aid)
+    
+    if application is None:
+        return jsonify({"message": "Application Not Found"}), 404
+    
+    if application.drive.company_id != company.cid:
+        return jsonify({"message": "Unauthorized"}), 401
+        
+    student = application.student
+    
+    return jsonify({
+        "sid": student.sid,
+        "name": student.name,
+        "email": student.user.email,
+        "phone": student.phone,
+        "course": student.course,
+        "cgpa": student.cgpa,
+        "graduation_year": student.graduation_year,
+        "skills": student.skills,
+        "resume": student.resume
+    }), 200
