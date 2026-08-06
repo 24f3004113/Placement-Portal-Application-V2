@@ -232,7 +232,20 @@ def company_drives(cid):
     
     if company is None:
         return jsonify({"message": "Company Not Found"}), 404
-    drives = Drive.query.filter_by(company_id=cid).all()
+    
+    search = request.args.get("search", "")
+
+    if search:
+        drives = Drive.query.filter(
+            Drive.company_id == cid,
+            or_(
+                Drive.job_title.contains(search),
+                Drive.description.contains(search),
+                Drive.course.contains(search)
+            )
+        ).all()
+    else:
+        drives = Drive.query.filter_by(company_id=cid).all()
     
     data = []
     
