@@ -88,12 +88,12 @@ def apply(did):
 
 @student.route("/student/applications", methods=["GET"])
 def applications():
-
+    
     if "uid" not in session or session["role"]!="student":
         return jsonify({"message":"Unauthorized"}),401
-
+    
     student = Student.query.filter_by(user_id=session["uid"]).first()
-
+    
     data=[]
     for application in Application.query.filter_by(student_id=student.sid).all():
         data.append({
@@ -103,6 +103,30 @@ def applications():
             "status":application.status,
             "feedback":application.feedback
         })
+        
+    return jsonify(data),200
 
+@student.route("/student/interviews", methods=["GET"])
+def interviews():
+    
+    if "uid" not in session or session["role"]!="student":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    student = Student.query.filter_by(user_id=session["uid"]).first()
+    
+    data=[]
+    for application in Application.query.filter_by(student_id=student.sid).all():
+        if application.interview:
+            data.append({
+                "company":application.drive.company.company_name,
+                "job_title":application.drive.job_title,
+                "date":application.interview.interview_date,
+                "time":application.interview.interview_time,
+                "mode":application.interview.interview_mode,
+                "link":application.interview.interview_link,
+                "location":application.interview.interview_location,
+                "remarks":application.interview.remarks
+            })
+            
     return jsonify(data),200
 
