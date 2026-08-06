@@ -37,6 +37,51 @@ def dashboard():
         "available_drives": available_drives
     }),200
 
+@student.route("/student/profile", methods=["GET"])
+def profile():
+
+    if "uid" not in session or session["role"]!="student":
+        return jsonify({"message":"Unauthorized"}),401
+
+    student = Student.query.filter_by(user_id=session["uid"]).first()
+
+    return jsonify({
+        "sid":student.sid,
+        "name":student.name,
+        "email":student.user.email,
+        "phone":student.phone,
+        "course":student.course,
+        "cgpa":student.cgpa,
+        "graduation_year":student.graduation_year,
+        "skills":student.skills,
+        "resume":student.resume
+    }),200
+
+@student.route("/student/profile/update", methods=["PUT"])
+def update_profile():
+
+    if "uid" not in session or session["role"] != "student":
+        return jsonify({"message":"Unauthorized"}),401
+
+    student = Student.query.filter_by(user_id=session["uid"]).first()
+    data = request.get_json()
+
+    student.user.password = data.get("password", student.user.password)
+    student.user.email = data.get("email", student.user.email)
+
+    student.name = data.get("name", student.name)
+    student.phone = data.get("phone", student.phone)
+    student.course = data.get("course", student.course)
+    student.cgpa = data.get("cgpa", student.cgpa)
+    student.graduation_year = data.get("graduation_year", student.graduation_year)
+    student.skills = data.get("skills", student.skills)
+    student.resume = data.get("resume", student.resume)
+
+    db.session.commit()
+
+    return jsonify({"message":"Profile Updated Successfully"}),200
+
+
 @student.route("/student/drive/<int:did>", methods=["GET"])
 def drive_details(did):
     
