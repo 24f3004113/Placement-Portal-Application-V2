@@ -130,3 +130,22 @@ def interviews():
             
     return jsonify(data),200
 
+@student.route("/student/placements", methods=["GET"])
+def placements():
+
+    if "uid" not in session or session["role"]!="student":
+        return jsonify({"message":"Unauthorized"}),401
+
+    student = Student.query.filter_by(user_id=session["uid"]).first()
+
+    data=[]
+    for placement in Placement.query.filter_by(student_id=student.sid).all():
+        data.append({
+            "company":placement.company.company_name,
+            "position":placement.position,
+            "salary":placement.salary,
+            "joining_date":placement.joining_date
+        })
+
+    return jsonify(data),200
+
