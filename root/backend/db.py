@@ -82,6 +82,22 @@ class Application(db.Model):
     status = db.Column(db.String(30), default="Applied")
     feedback = db.Column(db.Text)
 
+class Placement(db.Model):
+    
+    __tablename__ = "placement"
+    
+    pid = db.Column(db.Integer, primary_key=True)
+    student_id = db.Column(db.Integer, db.ForeignKey("student.sid"), nullable=False)
+    company_id = db.Column(db.Integer, db.ForeignKey("company.cid"), nullable=False)
+    drive_id = db.Column(db.Integer, db.ForeignKey("drive.did"), nullable=False)
+    position = db.Column(db.String(100))
+    salary = db.Column(db.Integer)
+    joining_date = db.Column(db.Date)
+    
+    student = db.relationship("Student", backref="placement")
+    company = db.relationship("Company", backref="placement")
+    drive = db.relationship("Drive", backref="placement")
+
 class Interview(db.Model):
     
     __tablename__ = "interview"
