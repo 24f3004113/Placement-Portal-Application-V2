@@ -277,7 +277,20 @@ def drive_applications(did):
     if drive is None:
         return jsonify({"message": "Drive Not Found"}), 404
         
-    applications = Application.query.filter_by(drive_id=did).all()
+    search = request.args.get("search", "")
+
+    if search:
+
+        applications = Application.query.filter_by(drive_id=did).join(Student).join(User).filter(
+            or_(
+                Student.name.contains(search),
+                User.email.contains(search),
+                Student.course.contains(search)
+            )
+        ).all()
+
+    else:
+        applications = Application.query.filter_by(drive_id=did).all()
     
     data = []
     
