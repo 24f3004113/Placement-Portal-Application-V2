@@ -32,7 +32,6 @@ class Company(db.Model):
 
     user = db.relationship("User", backref=db.backref("company", uselist=False))
     drives = db.relationship("Drive", backref="company")
-    placements = db.relationship("Placement", backref="company")
 
 
 class Student(db.Model):
@@ -52,7 +51,6 @@ class Student(db.Model):
     
     user = db.relationship("User", backref=db.backref("student", uselist=False))
     applications = db.relationship("Application", backref="student")
-    placements = db.relationship("Placement", backref="student")
 
 
 class Drive(db.Model):
@@ -72,7 +70,6 @@ class Drive(db.Model):
     status = db.Column(db.String(20), default="Open")
     
     applications = db.relationship("Application", backref="drive")
-    placements = db.relationship("Placement", backref="drive")
 
 class Application(db.Model):
     
@@ -83,18 +80,6 @@ class Application(db.Model):
     drive_id = db.Column(db.Integer, db.ForeignKey("drive.did"), nullable=False)
     application_date = db.Column(db.Date, default=date.today)
     status = db.Column(db.String(30), default="Applied")
-
-class Placement(db.Model):
-    
-    __tablename__ = "placement"
-    
-    pid = db.Column(db.Integer, primary_key=True)
-    student_id = db.Column(db.Integer, db.ForeignKey("student.sid"), nullable=False)
-    company_id = db.Column(db.Integer, db.ForeignKey("company.cid"), nullable=False)
-    drive_id = db.Column(db.Integer, db.ForeignKey("drive.did"), nullable=False)
-    position = db.Column(db.String(100))
-    salary = db.Column(db.Integer)
-    joining_date = db.Column(db.Date)
 
 class Interview(db.Model):
     
