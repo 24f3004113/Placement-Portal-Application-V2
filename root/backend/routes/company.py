@@ -22,8 +22,14 @@ def company_dashboard():
         Drive.company_id == company.cid,
         Application.status == "Selected"
     ).count()
-    
-    drives = Drive.query.filter_by(company_id=company.cid).all()
+    search = request.args.get("search", "")
+
+    if search:
+        drives = Drive.query.filter_by(company_id=company.cid).filter(
+            Drive.job_title.contains(search)
+        ).all()
+    else:
+        drives = Drive.query.filter_by(company_id=company.cid).all()
     
     data = []
     
