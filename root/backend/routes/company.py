@@ -24,7 +24,7 @@ def company_dashboard():
         Application.status == "Selected"
     ).count()
     search = request.args.get("search", "")
-
+    
     if search:
         drives = Drive.query.filter_by(company_id=company.cid).filter(
             Drive.job_title.contains(search)
@@ -61,6 +61,48 @@ def company_dashboard():
         
         "drives": data
     }), 200
+
+@company.route("/company/profile", methods=["GET"])
+def company_profile():
+    if "uid" not in session or session["role"] != "company":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    company = Company.query.filter_by(user_id=session["uid"]).first()
+    if company is None:
+        return jsonify({"message":"Company Not Found"}),404
+    
+    return jsonify({
+        "company_name":company.company_name,
+        "industry":company.industry,
+        "location":company.location,
+        "hr_contact":company.hr_contact,
+        "website":company.website,
+        "approval_status":company.approval_status,
+        "blacklisted":company.blacklisted
+    }),200
+
+@company.route("/company/profile/update", methods=["PUT"])
+def update_company_profile():
+    if "uid" not in session or session["role"] != "company":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    company = Company.query.filter_by(user_id=session["uid"]).first()
+    if company is None:
+        return jsonify({"message":"Company Not Found"}),404
+    
+    data = request.get_json()
+    
+    company.user.password = data.get("password", company.user.password)
+    company.user.email = data.get("email", company.user.email)
+    
+    company.company_name = data.get("company_name", company.company_name)
+    company.industry = data.get("industry", company.industry)
+    company.location = data.get("location", company.location)
+    company.hr_contact = data.get("hr_contact", company.hr_contact)
+    company.website = data.get("website", company.website)
+    
+    db.session.commit()
+    return jsonify({"message":"Profile Updated Successfully"}),200
 
 @company.route("/company/create_drive", methods=["POST"])
 def create_drive():
