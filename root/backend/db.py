@@ -80,6 +80,7 @@ class Application(db.Model):
     drive_id = db.Column(db.Integer, db.ForeignKey("drive.did"), nullable=False)
     application_date = db.Column(db.Date, default=date.today)
     status = db.Column(db.String(30), default="Applied")
+    feedback = db.Column(db.Text)
 
 class Interview(db.Model):
     

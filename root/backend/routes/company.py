@@ -193,7 +193,11 @@ def update_application(aid):
     if application is None or application.drive.company_id != company.cid:
         return jsonify({"message":"Application Not Found"}),404
     
-    application.status = request.get_json().get("status", application.status)
+    data = request.get_json()
+
+    application.status = data.get("status", application.status)
+    application.feedback = data.get("feedback", application.feedback)
+
     
     db.session.commit()
     
