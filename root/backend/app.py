@@ -32,6 +32,8 @@ app.register_blueprint(admin)
 from routes.company import company
 app.register_blueprint(company)
 
+from routes.student import student
+app.register_blueprint(student)
 
 
 
