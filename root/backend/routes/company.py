@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, session, request
-from db import db, Company, Drive, Application, Placement
+from db import db, Company, Drive, Application
 
 company = Blueprint("company", __name__)
 
@@ -83,6 +83,32 @@ def create_drive():
     db.session.commit()
     
     return jsonify({"message": "Placement Drive Created Successfully."}), 201
+
+@company.route("/company/edit_drive/<int:did>", methods=["PUT"])
+def edit_drive(did):
+    
+    if "uid" not in session or session["role"] != "company":
+        return jsonify({"message": "Unauthorized"}), 401
+    
+    company = Company.query.filter_by(user_id=session["uid"]).first()
+    drive = Drive.query.filter_by(did=did, company_id=company.cid).first()
+    
+    if drive is None:
+        return jsonify({"message": "Drive Not Found"}), 404
+    
+    data = request.get_json()
+    
+    drive.job_title = data.get("job_title", drive.job_title)
+    drive.description = data.get("description", drive.description)
+    drive.course = data.get("course", drive.course)
+    drive.min_cgpa = data.get("min_cgpa", drive.min_cgpa)
+    drive.graduation_year = data.get("graduation_year", drive.graduation_year)
+    drive.salary = data.get("salary", drive.salary)
+    drive.application_deadline = data.get("application_deadline", drive.application_deadline)
+    
+    db.session.commit()
+    
+    return jsonify({"message": "Drive Updated Successfully"}), 200
 
 @company.route("/company/drive/<int:did>/applications", methods=["GET"])
 def drive_applications(did):
