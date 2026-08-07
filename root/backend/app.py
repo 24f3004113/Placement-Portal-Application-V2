@@ -1,8 +1,11 @@
 from flask import Flask, Blueprint
 from db import db, User, Company, Student, Drive, Application
 from flask_jwt_extended import JWTManager
+from flask_cors import CORS
 
 app = Flask(__name__)
+
+CORS(app, supports_credentials=True)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///placement.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False

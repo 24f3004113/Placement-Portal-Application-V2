@@ -18,13 +18,15 @@ def user_login():
     
     user = User.query.filter_by(email=email,password=password).first()
     
+    if user is None:
+        return jsonify({"message": "Invalid Email or Password."}), 401
+    
     access_token = create_access_token(
         identity=str(user.uid),
         additional_claims={"role": user.role}
     )
     
-    if user is None:
-        return jsonify({"message": "Invalid Email or Password."}), 401
+
     
     if user.role == "admin":
         session["uid"] = user.uid
