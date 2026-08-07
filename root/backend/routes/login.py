@@ -22,7 +22,7 @@ def user_login():
         session["uid"] = user.uid
         session["role"] = "admin"
         
-        return jsonify({"message": "Admin Login Successful"}), 200
+        return jsonify({"message": "Admin Login Successful", "role": "admin"}), 200
     
     elif user.role == "company":
         company = Company.query.filter_by(user_id=user.uid).first()
@@ -39,7 +39,7 @@ def user_login():
         session["uid"] = user.uid
         session["role"] = "company"
         
-        return jsonify({"message": "Company Login Successful"}), 200
+        return jsonify({"message": "Company Login Successful", "role": "company"}), 200
     
     elif user.role == "student":
         student = Student.query.filter_by(user_id=user.uid).first()
@@ -50,7 +50,7 @@ def user_login():
         session["uid"] = user.uid
         session["role"] = "student"
         
-        return jsonify({"message": "Student Login Successful"}), 200
+        return jsonify({"message": "Student Login Successful", "role": "student"}), 200
 
 
 @login.route("/logout")
