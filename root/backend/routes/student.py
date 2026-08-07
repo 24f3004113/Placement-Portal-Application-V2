@@ -89,10 +89,18 @@ def update_profile():
     student.cgpa = data.get("cgpa", student.cgpa)
     student.graduation_year = data.get("graduation_year", student.graduation_year)
     student.skills = data.get("skills", student.skills)
-    student.resume = data.get("resume", student.resume)
+    resume = request.files.get("resume")
 
+    if resume:
+        if not resume.filename.lower().endswith(".pdf"):
+            return jsonify({"message":"Only PDF files are allowed."}),400
+        
+        filename = str(student.sid) + ".pdf"
+        resume.save("static/resumes/" + filename)
+        student.resume = filename
+        
     db.session.commit()
-
+    
     return jsonify({"message":"Profile Updated Successfully"}),200
 
 
