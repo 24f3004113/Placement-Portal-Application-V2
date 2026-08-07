@@ -271,6 +271,31 @@ def update_application(aid):
     
     return jsonify({"message":"Application Updated Successfully"}),200
 
+@company.route("/company/application/<int:aid>/history", methods=["GET"])
+def application_history(aid):
+    
+    if "uid" not in session or session["role"] != "company":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    company = Company.query.filter_by(user_id=session["uid"]).first()
+    application = Application.query.get(aid)
+    
+    if application is None or application.drive.company_id != company.cid:
+        return jsonify({"message":"Application Not Found"}),404
+    
+    history = ApplicationHistory.query.filter_by(application_id=aid).order_by(ApplicationHistory.updated_at).all()
+    
+    data = []
+    
+    for history in history:
+        data.append({
+            "status": history.status,
+            "feedback": history.feedback,
+            "updated_at": history.updated_at
+        })
+        
+    return jsonify(data),200
+
 @company.route("/company/application/<int:aid>/interview", methods=["POST"])
 def schedule_interview(aid):
     
