@@ -1,12 +1,13 @@
 from flask import Flask, Blueprint
 from db import db, User, Company, Student, Drive, Application
+from flask_jwt_extended import JWTManager
 
 app = Flask(__name__)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///placement.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "lokaproject"
-app.config["JWT_SECRET_KEY"] = "lokajwtkey"
+app.config["JWT_SECRET_KEY"] = "loka_jwt_secret_key_extended_for_no_warning"
 
 jwt = JWTManager(app)
 

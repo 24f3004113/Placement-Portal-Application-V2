@@ -2,21 +2,27 @@ from flask import Blueprint, jsonify, request, session
 from sqlalchemy import or_
 from datetime import date
 from db import db, Student, Company, Drive, Application, Interview, Placement, ApplicationHistory
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+
 
 student = Blueprint("student", __name__)
 
 @student.route("/student/dashboard", methods=["GET"])
+@jwt_required()
 def dashboard():
     
-    if "uid" not in session or session["role"] != "student":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "student":
         return jsonify({"message":"Unauthorized"}),401
     
-    student = Student.query.filter_by(user_id=session["uid"]).first()
+    student = Student.query.filter_by(user_id=uid).first()
     
     available_drives = []
     
     search = request.args.get("search", "")
-
+    
     if search:
         drives = Drive.query.join(Company).filter(
             Drive.approval_status=="Approved",
@@ -52,13 +58,17 @@ def dashboard():
     }),200
 
 @student.route("/student/profile", methods=["GET"])
+@jwt_required()
 def profile():
-
-    if "uid" not in session or session["role"]!="student":
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role!="student":
         return jsonify({"message":"Unauthorized"}),401
-
-    student = Student.query.filter_by(user_id=session["uid"]).first()
-
+    
+    student = Student.query.filter_by(user_id=uid).first()
+    
     return jsonify({
         "sid":student.sid,
         "name":student.name,
@@ -72,17 +82,21 @@ def profile():
     }),200
 
 @student.route("/student/profile/update", methods=["PUT"])
+@jwt_required()
 def update_profile():
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
 
-    if "uid" not in session or session["role"] != "student":
+    if "uid" not in session or role != "student":
         return jsonify({"message":"Unauthorized"}),401
-
-    student = Student.query.filter_by(user_id=session["uid"]).first()
+    
+    student = Student.query.filter_by(user_id=uid).first()
     data = request.get_json()
-
+    
     student.user.password = data.get("password", student.user.password)
     student.user.email = data.get("email", student.user.email)
-
+    
     student.name = data.get("name", student.name)
     student.phone = data.get("phone", student.phone)
     student.course = data.get("course", student.course)
@@ -105,7 +119,11 @@ def update_profile():
 
 
 @student.route("/student/drive/<int:did>", methods=["GET"])
+@jwt_required()
 def drive_details(did):
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
     
     drive = Drive.query.get(did)
     
@@ -124,12 +142,16 @@ def drive_details(did):
     }),200
 
 @student.route("/student/apply/<int:did>", methods=["POST"])
+@jwt_required()
 def apply(did):
     
-    if "uid" not in session or session["role"]!="student":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role!="student":
         return jsonify({"message":"Unauthorized"}),401
     
-    student = Student.query.filter_by(user_id=session["uid"]).first()
+    student = Student.query.filter_by(user_id=uid).first()
     
     drive = Drive.query.get(did)
     
@@ -154,12 +176,16 @@ def apply(did):
 
 
 @student.route("/student/applications", methods=["GET"])
+@jwt_required()
 def applications():
     
-    if "uid" not in session or session["role"]!="student":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role!="student":
         return jsonify({"message":"Unauthorized"}),401
     
-    student = Student.query.filter_by(user_id=session["uid"]).first()
+    student = Student.query.filter_by(user_id=uid).first()
     
     data=[]
     for application in Application.query.filter_by(student_id=student.sid).all():
@@ -174,12 +200,16 @@ def applications():
     return jsonify(data),200
 
 @student.route("/student/application/<int:aid>/history", methods=["GET"])
+@jwt_required()
 def application_history(aid):
     
-    if "uid" not in session or session["role"] != "student":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "student":
         return jsonify({"message":"Unauthorized"}),401
     
-    student = Student.query.filter_by(user_id=session["uid"]).first()
+    student = Student.query.filter_by(user_id=uid).first()
     application = Application.query.filter_by(aid=aid, student_id=student.sid).first()
     
     if application is None:
@@ -198,12 +228,16 @@ def application_history(aid):
     return jsonify(data),200
 
 @student.route("/student/history", methods=["GET"])
+@jwt_required()
 def all_application_history():
     
-    if "uid" not in session or session["role"] != "student":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "student":
         return jsonify({"message":"Unauthorized"}),401
     
-    student = Student.query.filter_by(user_id=session["uid"]).first()
+    student = Student.query.filter_by(user_id=uid).first()
     
     applications = Application.query.filter_by(student_id=student.sid).all()
     
@@ -226,12 +260,16 @@ def all_application_history():
     return jsonify(data),200
 
 @student.route("/student/interviews", methods=["GET"])
+@jwt_required()
 def interviews():
     
-    if "uid" not in session or session["role"]!="student":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role!="student":
         return jsonify({"message":"Unauthorized"}),401
     
-    student = Student.query.filter_by(user_id=session["uid"]).first()
+    student = Student.query.filter_by(user_id=uid).first()
     
     data=[]
     for application in Application.query.filter_by(student_id=student.sid).all():
@@ -250,12 +288,16 @@ def interviews():
     return jsonify(data),200
 
 @student.route("/student/placements", methods=["GET"])
+@jwt_required()
 def placements():
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
 
-    if "uid" not in session or session["role"]!="student":
+    if "uid" not in session or role!="student":
         return jsonify({"message":"Unauthorized"}),401
 
-    student = Student.query.filter_by(user_id=session["uid"]).first()
+    student = Student.query.filter_by(user_id=uid).first()
 
     data=[]
     for placement in Placement.query.filter_by(student_id=student.sid).all():
