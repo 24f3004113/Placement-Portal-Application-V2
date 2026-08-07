@@ -6,6 +6,9 @@ app = Flask(__name__)
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///placement.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "lokaproject"
+app.config["JWT_SECRET_KEY"] = "lokajwtkey"
+
+jwt = JWTManager(app)
 
 db.init_app(app)
 

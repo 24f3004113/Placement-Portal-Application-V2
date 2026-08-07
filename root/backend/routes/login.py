@@ -1,5 +1,6 @@
 from flask import Blueprint, request, jsonify, session
 from db import User, Company, Student
+from flask_jwt_extended import create_access_token
 
 login = Blueprint("login", __name__)
 
@@ -9,6 +10,11 @@ def user_login():
     
     email = data.get("email")
     password = data.get("password")
+    
+    access_token = create_access_token(
+        identity=user.uid,
+        additional_claims={"role": user.role}
+    )
     
     if not email or not password:
         return jsonify({"message": "Email and Password are required."}), 400
@@ -22,7 +28,13 @@ def user_login():
         session["uid"] = user.uid
         session["role"] = "admin"
         
-        return jsonify({"message": "Admin Login Successful", "role": "admin"}), 200
+        return jsonify({"message": "Admin Login Successful",
+                        "data": {
+                            "uid": user.uid,
+                            "email": user.email,
+                            "role": user.role,
+                            "access_token": access_token
+                    }}), 200
     
     elif user.role == "company":
         company = Company.query.filter_by(user_id=user.uid).first()
@@ -39,7 +51,14 @@ def user_login():
         session["uid"] = user.uid
         session["role"] = "company"
         
-        return jsonify({"message": "Company Login Successful", "role": "company"}), 200
+        return jsonify({"message": "Company Login Successful",
+                        "data": {
+                            "uid": user.uid,
+                            "email": user.email,
+                            "role": user.role,
+                            "access_token": access_token
+                        }
+                        }), 200
     
     elif user.role == "student":
         student = Student.query.filter_by(user_id=user.uid).first()
@@ -50,7 +69,14 @@ def user_login():
         session["uid"] = user.uid
         session["role"] = "student"
         
-        return jsonify({"message": "Student Login Successful", "role": "student"}), 200
+        return jsonify({"message": "Student Login Successful",
+                        "data": {
+                            "uid": user.uid,
+                            "email": user.email,
+                            "role": user.role,
+                            "access_token": access_token
+                            }
+                        }), 200
 
 
 @login.route("/logout")
