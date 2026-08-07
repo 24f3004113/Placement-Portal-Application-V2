@@ -1,5 +1,5 @@
 from flask_sqlalchemy import SQLAlchemy
-from datetime import date
+from datetime import date, datetime
 
 db = SQLAlchemy()
 
@@ -81,6 +81,18 @@ class Application(db.Model):
     application_date = db.Column(db.Date, default=date.today)
     status = db.Column(db.String(30), default="Applied")
     feedback = db.Column(db.Text)
+
+class ApplicationHistory(db.Model):
+    
+    __tablename__ = "application_history"
+    
+    hid = db.Column(db.Integer, primary_key=True)
+    application_id = db.Column(db.Integer, db.ForeignKey("application.aid"), nullable=False)
+    status = db.Column(db.String(20), nullable=False)
+    feedback = db.Column(db.Text)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow)
+    
+    application = db.relationship("Application", backref="history")
 
 class Placement(db.Model):
     
