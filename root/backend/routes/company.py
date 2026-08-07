@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, session, request
-from db import db, User, Student, Company, Drive, Application, Interview
+from db import db, User, Student, Company, Drive, Application, Interview, ApplicationHistory
 from sqlalchemy import or_
 
 company = Blueprint("company", __name__)
@@ -255,10 +255,17 @@ def update_application(aid):
         return jsonify({"message":"Application Not Found"}),404
     
     data = request.get_json()
-
+    
     application.status = data.get("status", application.status)
     application.feedback = data.get("feedback", application.feedback)
-
+    
+    history = ApplicationHistory(
+        application_id = application.aid,
+        status = application.status,
+        feedback = application.feedback
+    )
+    
+    db.session.add(history)
     
     db.session.commit()
     
