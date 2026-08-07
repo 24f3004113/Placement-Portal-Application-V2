@@ -1,16 +1,21 @@
 from flask import Blueprint, jsonify, session, request
 from db import db, User, Student, Company, Drive, Application, Interview, ApplicationHistory
 from sqlalchemy import or_
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 company = Blueprint("company", __name__)
 
 @company.route("/company/dashboard", methods=["GET"])
+@jwt_required()
 def company_dashboard():
     
-    if "uid" not in session or session["role"] != "company":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
         return jsonify({"message": "Unauthorized"}), 401
     
-    company = Company.query.filter_by(user_id=session["uid"]).first()
+    company = Company.query.filter_by(user_id=uid).first()
     
     if company is None:
         return jsonify({"message": "Company Not Found"}), 404
@@ -63,11 +68,16 @@ def company_dashboard():
     }), 200
 
 @company.route("/company/profile", methods=["GET"])
+@jwt_required()
 def company_profile():
-    if "uid" not in session or session["role"] != "company":
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
         return jsonify({"message":"Unauthorized"}),401
     
-    company = Company.query.filter_by(user_id=session["uid"]).first()
+    company = Company.query.filter_by(user_id=uid).first()
     if company is None:
         return jsonify({"message":"Company Not Found"}),404
     
@@ -82,11 +92,16 @@ def company_profile():
     }),200
 
 @company.route("/company/profile/update", methods=["PUT"])
+@jwt_required()
 def update_company_profile():
-    if "uid" not in session or session["role"] != "company":
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
         return jsonify({"message":"Unauthorized"}),401
     
-    company = Company.query.filter_by(user_id=session["uid"]).first()
+    company = Company.query.filter_by(user_id=uid).first()
     if company is None:
         return jsonify({"message":"Company Not Found"}),404
     
@@ -105,12 +120,16 @@ def update_company_profile():
     return jsonify({"message":"Profile Updated Successfully"}),200
 
 @company.route("/company/create_drive", methods=["POST"])
+@jwt_required()
 def create_drive():
     
-    if "uid" not in session or session["role"] != "company":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
         return jsonify({"message": "Unauthorized"}), 401
     
-    company = Company.query.filter_by(user_id=session["uid"]).first()
+    company = Company.query.filter_by(user_id=uid).first()
     
     if company is None:
         return jsonify({"message": "Company Not Found"}), 404
@@ -134,12 +153,16 @@ def create_drive():
     return jsonify({"message": "Placement Drive Created Successfully."}), 201
 
 @company.route("/company/edit_drive/<int:did>", methods=["PUT"])
+@jwt_required()
 def edit_drive(did):
     
-    if "uid" not in session or session["role"] != "company":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
         return jsonify({"message": "Unauthorized"}), 401
     
-    company = Company.query.filter_by(user_id=session["uid"]).first()
+    company = Company.query.filter_by(user_id=uid).first()
     drive = Drive.query.filter_by(did=did, company_id=company.cid).first()
     
     if drive is None:
@@ -160,12 +183,16 @@ def edit_drive(did):
     return jsonify({"message": "Drive Updated Successfully"}), 200
 
 @company.route("/company/drive/<int:did>/applications", methods=["GET"])
+@jwt_required()
 def drive_applications(did):
     
-    if "uid" not in session or session["role"] != "company":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
         return jsonify({"message": "Unauthorized"}), 401
     
-    company = Company.query.filter_by(user_id=session["uid"]).first()
+    company = Company.query.filter_by(user_id=uid).first()
     
     if company is None:
         return jsonify({"message": "Company Not Found"}), 404
@@ -212,12 +239,16 @@ def drive_applications(did):
     }), 200
 
 @company.route("/company/application/<int:aid>/student", methods=["GET"])
+@jwt_required()
 def student_profile(aid):
     
-    if "uid" not in session or session["role"] != "company":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
         return jsonify({"message": "Unauthorized"}), 401
     
-    company = Company.query.filter_by(user_id=session["uid"]).first()
+    company = Company.query.filter_by(user_id=uid).first()
     
     application = Application.query.get(aid)
     
@@ -242,12 +273,16 @@ def student_profile(aid):
     }), 200
     
 @company.route("/company/application/<int:aid>/update", methods=["PUT"])
+@jwt_required()
 def update_application(aid):
     
-    if "uid" not in session or session["role"] != "company":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
         return jsonify({"message":"Unauthorized"}),401
     
-    company = Company.query.filter_by(user_id=session["uid"]).first()
+    company = Company.query.filter_by(user_id=uid).first()
     
     application = Application.query.get(aid)
     
@@ -272,12 +307,16 @@ def update_application(aid):
     return jsonify({"message":"Application Updated Successfully"}),200
 
 @company.route("/company/application/<int:aid>/history", methods=["GET"])
+@jwt_required()
 def application_history(aid):
     
-    if "uid" not in session or session["role"] != "company":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
         return jsonify({"message":"Unauthorized"}),401
     
-    company = Company.query.filter_by(user_id=session["uid"]).first()
+    company = Company.query.filter_by(user_id=uid).first()
     application = Application.query.get(aid)
     
     if application is None or application.drive.company_id != company.cid:
@@ -297,12 +336,16 @@ def application_history(aid):
     return jsonify(data),200
 
 @company.route("/company/application/<int:aid>/interview", methods=["POST"])
+@jwt_required()
 def schedule_interview(aid):
     
-    if "uid" not in session or session["role"] != "company":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
         return jsonify({"message":"Unauthorized"}),401
     
-    company = Company.query.filter_by(user_id=session["uid"]).first()
+    company = Company.query.filter_by(user_id=uid).first()
     
     application = Application.query.get(aid)
     
@@ -333,12 +376,16 @@ def schedule_interview(aid):
     return jsonify({"message":"Interview Scheduled Successfully"}),201
 
 @company.route("/company/interview/<int:iid>/update", methods=["PUT"])
+@jwt_required()
 def update_interview(iid):
     
-    if "uid" not in session or session["role"] != "company":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
         return jsonify({"message":"Unauthorized"}),401
     
-    company = Company.query.filter_by(user_id=session["uid"]).first()
+    company = Company.query.filter_by(user_id=uid).first()
     
     interview = Interview.query.get(iid)
     
