@@ -1,6 +1,6 @@
 from flask import Blueprint, jsonify, session, request
 from sqlalchemy import or_
-from db import db, User, Company, Student, Drive, Application
+from db import db, User, Company, Student, Drive, Application ,ApplicationHistory
 
 admin = Blueprint("admin", __name__)
 
@@ -29,9 +29,8 @@ def all_students():
         return jsonify({"message": "Unauthorized"}), 401
     
     search = request.args.get("search", "")
-
+    
     if search:
-
         students = Student.query.join(User).filter(
             or_(
                 Student.name.contains(search),
@@ -39,10 +38,9 @@ def all_students():
                 Student.course.contains(search)
             )
         ).all()
-
     else:
         students = Student.query.all()
-
+        
     data = []
     
     for student in students:
@@ -234,7 +232,7 @@ def company_drives(cid):
         return jsonify({"message": "Company Not Found"}), 404
     
     search = request.args.get("search", "")
-
+    
     if search:
         drives = Drive.query.filter(
             Drive.company_id == cid,
@@ -278,9 +276,8 @@ def drive_applications(did):
         return jsonify({"message": "Drive Not Found"}), 404
         
     search = request.args.get("search", "")
-
+    
     if search:
-
         applications = Application.query.filter_by(drive_id=did).join(Student).join(User).filter(
             or_(
                 Student.name.contains(search),
@@ -288,7 +285,6 @@ def drive_applications(did):
                 Student.course.contains(search)
             )
         ).all()
-
     else:
         applications = Application.query.filter_by(drive_id=did).all()
     
@@ -311,3 +307,27 @@ def drive_applications(did):
         "company": drive.company.company_name,
         "applications": data
     }), 200
+
+@admin.route("/admin/application/<int:aid>/history", methods=["GET"])
+def application_history(aid):
+    
+    if "uid" not in session or session["role"] != "admin":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    application = Application.query.get(aid)
+    
+    if application is None:
+        return jsonify({"message":"Application Not Found"}),404
+    
+    history = ApplicationHistory.query.filter_by(application_id=aid).order_by(ApplicationHistory.updated_at).all()
+    
+    data = []
+    
+    for h in history:
+        data.append({
+            "status": h.status,
+            "feedback": h.feedback,
+            "updated_at": h.updated_at
+        })
+        
+    return jsonify(data),200
