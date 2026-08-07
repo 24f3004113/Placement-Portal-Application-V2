@@ -16,7 +16,6 @@ def student_register():
     cgpa = data.get("cgpa")
     graduation_year = data.get("graduation_year")
     skills = data.get("skills")
-    resume = data.get("resume")
     
     if not email or not password or not name:
         return jsonify({"message": "Required fields are missing."}), 400
@@ -40,8 +39,7 @@ def student_register():
         course=course,
         cgpa=cgpa,
         graduation_year=graduation_year,
-        skills=skills,
-        resume=resume
+        skills=skills
     )
     
     db.session.add(student)

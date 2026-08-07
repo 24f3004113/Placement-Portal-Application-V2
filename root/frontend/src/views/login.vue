@@ -12,7 +12,7 @@
 
 <button @click="login">Login</button>
 
-<button>Student Register</button>
+<button @click="$router.push('/student/register')">Student Register</button>
 
 <button>Company Register</button>
 
@@ -63,11 +63,11 @@ export default{
 
             let data=await response.json()
 
-            console.log(data)
+
 
             this.message = data.message
 
-            console.log(data.data.role)
+
 
             if(response.ok){
 
