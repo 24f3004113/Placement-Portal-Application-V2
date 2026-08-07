@@ -14,7 +14,7 @@
 
 <button @click="$router.push('/student/register')">Student Register</button>
 
-<button>Company Register</button>
+<button @click="$router.push('/company/register')">Company Register</button>
 
 <br><br>
 
