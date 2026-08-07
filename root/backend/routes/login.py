@@ -11,15 +11,17 @@ def user_login():
     email = data.get("email")
     password = data.get("password")
     
-    access_token = create_access_token(
-        identity=user.uid,
-        additional_claims={"role": user.role}
-    )
+
     
     if not email or not password:
         return jsonify({"message": "Email and Password are required."}), 400
     
     user = User.query.filter_by(email=email,password=password).first()
+    
+    access_token = create_access_token(
+        identity=str(user.uid),
+        additional_claims={"role": user.role}
+    )
     
     if user is None:
         return jsonify({"message": "Invalid Email or Password."}), 401

@@ -1,14 +1,20 @@
 from flask import Blueprint, jsonify, session, request
 from sqlalchemy import or_
 from db import db, User, Company, Student, Drive, Application ,ApplicationHistory
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 
 admin = Blueprint("admin", __name__)
 
+
 @admin.route("/admin/dashboard", methods=["GET"])
+@jwt_required()
 def admin_dashboard():
     
-    if "uid" not in session or session["role"] != "admin":
-        return jsonify({"message": "Unauthorized"}), 401
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
     
     students = Student.query.count()
     companies = Company.query.count()
@@ -22,11 +28,16 @@ def admin_dashboard():
         "applications": applications
     }), 200
     
+
 @admin.route("/admin/students", methods=["GET"])
+@jwt_required()
 def all_students():
     
-    if "uid" not in session or session["role"] != "admin":
-        return jsonify({"message": "Unauthorized"}), 401
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
     
     search = request.args.get("search", "")
     
@@ -58,10 +69,15 @@ def all_students():
         
     return jsonify(data), 200
 
+
 @admin.route("/admin/companies", methods=["GET"])
+@jwt_required()
 def all_companies():
-    if "uid" not in session or session["role"] != "admin":
-        return jsonify({"message": "Unauthorized"}), 401
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
     
     search = request.args.get("search", "")
     
@@ -93,11 +109,16 @@ def all_companies():
         
     return jsonify(data), 200
 
+
 @admin.route("/admin/company/pending", methods=["GET"])
+@jwt_required()
 def pending_companies():
     
-    if "uid" not in session or session["role"] != "admin":
-        return jsonify({"message": "Unauthorized"}), 401
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
         
     companies = Company.query.filter_by(approval_status="Pending").all()
     
@@ -115,11 +136,16 @@ def pending_companies():
         
     return jsonify(data), 200
 
+
 @admin.route("/admin/company/<int:cid>/approve", methods=["PUT"])
+@jwt_required()
 def approve_company(cid):
     
-    if "uid" not in session or session["role"] != "admin":
-        return jsonify({"message": "Unauthorized"}), 401
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
     
     company = Company.query.get(cid)
     
@@ -132,10 +158,15 @@ def approve_company(cid):
     
     return jsonify({"message": "Company Approved Successfully"}), 200
 
+
 @admin.route("/admin/company/<int:cid>/reject", methods=["PUT"])
+@jwt_required()
 def reject_company(cid):
     
-    if "uid" not in session or session["role"] != "admin":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
         return jsonify({"message":"Unauthorized"}),401
     
     company = Company.query.get(cid)
@@ -150,10 +181,14 @@ def reject_company(cid):
     return jsonify({"message":"Company Rejected Successfully"}),200
 
 @admin.route("/admin/company/<int:cid>/blacklist", methods=["PUT"])
+@jwt_required()
 def blacklist_company(cid):
     
-    if "uid" not in session or session["role"] != "admin":
-        return jsonify({"message": "Unauthorized"}), 401
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
     
     company = Company.query.get(cid)
     
@@ -166,11 +201,16 @@ def blacklist_company(cid):
     
     return jsonify({"message": "Company Blacklisted Successfully"}), 200
 
+
 @admin.route("/admin/company/<int:cid>/unblacklist", methods=["PUT"])
+@jwt_required()
 def unblacklist_company(cid):
     
-    if "uid" not in session or session["role"] != "admin":
-        return jsonify({"message": "Unauthorized"}), 401
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
     
     company = Company.query.get(cid)
     
@@ -184,10 +224,14 @@ def unblacklist_company(cid):
     return jsonify({"message": "Company Unblacklisted Successfully"}), 200
 
 @admin.route("/admin/drives", methods=["GET"])
+@jwt_required()
 def all_drives():
     
-    if "uid" not in session or session["role"] != "admin":
-        return jsonify({"message": "Unauthorized"}), 401
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
         
     search = request.args.get("search", "")
     
@@ -221,10 +265,14 @@ def all_drives():
     return jsonify(data), 200
 
 @admin.route("/admin/company/<int:cid>/drives", methods=["GET"])
+@jwt_required()
 def company_drives(cid):
     
-    if "uid" not in session or session["role"] != "admin":
-        return jsonify({"message": "Unauthorized"}), 401
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
         
     company = Company.query.get(cid)
     
@@ -265,10 +313,14 @@ def company_drives(cid):
     }), 200
 
 @admin.route("/admin/drive/<int:did>/applications", methods=["GET"])
+@jwt_required()
 def drive_applications(did):
     
-    if "uid" not in session or session["role"] != "admin":
-        return jsonify({"message": "Unauthorized"}), 401
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
         
     drive = Drive.query.get(did)
     
@@ -309,9 +361,13 @@ def drive_applications(did):
     }), 200
 
 @admin.route("/admin/application/<int:aid>/history", methods=["GET"])
+@jwt_required()
 def application_history(aid):
     
-    if "uid" not in session or session["role"] != "admin":
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
         return jsonify({"message":"Unauthorized"}),401
     
     application = Application.query.get(aid)
