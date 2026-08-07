@@ -1,7 +1,7 @@
 from flask import Blueprint, jsonify, request, session
 from sqlalchemy import or_
 from datetime import date
-from db import db, Student, Company, Drive, Application, Interview, Placement
+from db import db, Student, Company, Drive, Application, Interview, Placement, ApplicationHistory
 
 student = Blueprint("student", __name__)
 
@@ -163,6 +163,58 @@ def applications():
             "feedback":application.feedback
         })
         
+    return jsonify(data),200
+
+@student.route("/student/application/<int:aid>/history", methods=["GET"])
+def application_history(aid):
+    
+    if "uid" not in session or session["role"] != "student":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    student = Student.query.filter_by(user_id=session["uid"]).first()
+    application = Application.query.filter_by(aid=aid, student_id=student.sid).first()
+    
+    if application is None:
+        return jsonify({"message":"Application Not Found"}),404
+    
+    history = ApplicationHistory.query.filter_by(application_id=aid).order_by(ApplicationHistory.updated_at).all()
+    
+    data = []
+    
+    for history in history:
+        data.append({
+            "status": history.status,
+            "feedback": history.feedback,
+            "updated_at": history.updated_at
+        })
+    return jsonify(data),200
+
+@student.route("/student/history", methods=["GET"])
+def all_application_history():
+    
+    if "uid" not in session or session["role"] != "student":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    student = Student.query.filter_by(user_id=session["uid"]).first()
+    
+    applications = Application.query.filter_by(student_id=student.sid).all()
+    
+    data = []
+    
+    for application in applications:
+        
+        history = ApplicationHistory.query.filter_by(application_id=application.aid).order_by(ApplicationHistory.updated_at).all()
+        
+        for history in history:
+            data.append({
+                "application_id": application.aid,
+                "company": application.drive.company.company_name,
+                "job_title": application.drive.job_title,
+                "status": history.status,
+                "feedback": history.feedback,
+                "updated_at": history.updated_at
+            })
+            
     return jsonify(data),200
 
 @student.route("/student/interviews", methods=["GET"])
