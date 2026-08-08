@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, session, request
 from db import db, User, Student, Company, Drive, Application, Interview, ApplicationHistory
 from sqlalchemy import or_
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from datetime import datetime
 
 company = Blueprint("company", __name__)
 
@@ -144,7 +145,9 @@ def create_drive():
         min_cgpa=data.get("min_cgpa"),
         graduation_year=data.get("graduation_year"),
         salary=data.get("salary"),
-        application_deadline=data.get("application_deadline")
+        application_deadline=datetime.strptime(data.get("application_deadline"),"%Y-%m-%d").date(),
+        approval_status="Pending",
+        status="Open"
     )
     
     db.session.add(drive)

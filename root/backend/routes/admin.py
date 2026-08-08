@@ -349,6 +349,47 @@ def all_drives():
         
     return jsonify(data), 200
 
+@admin.route("/admin/drive/<int:did>/approve", methods=["PUT"])
+@jwt_required()
+def approve_drive(did):
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    drive = Drive.query.get(did)
+    
+    if drive is None:
+        return jsonify({"message":"Drive Not Found"}),404
+    
+    drive.approval_status = "Approved"
+    db.session.commit()
+    
+    return jsonify({"message":"Drive Approved Successfully"}),200
+
+
+@admin.route("/admin/drive/<int:did>/reject", methods=["PUT"])
+@jwt_required()
+def reject_drive(did):
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    drive = Drive.query.get(did)
+    
+    if drive is None:
+        return jsonify({"message":"Drive Not Found"}),404
+    
+    drive.approval_status = "Rejected"
+    db.session.commit()
+    
+    return jsonify({"message":"Drive Rejected Successfully"}),200
+
 @admin.route("/admin/company/<int:cid>/drives", methods=["GET"])
 @jwt_required()
 def company_drives(cid):
