@@ -40,12 +40,15 @@ def dashboard():
         
         if drive.application_deadline >= date.today():
             
+            applied = Application.query.filter_by(student_id=student.sid,drive_id=drive.did).first() is not None
+            
             available_drives.append({
                 "did": drive.did,
                 "company": drive.company.company_name,
                 "job_title": drive.job_title,
                 "salary": drive.salary,
-                "application_deadline": drive.application_deadline
+                "application_deadline": drive.application_deadline.strftime("%d %b %Y"),
+                "applied": applied
             })
             
     return jsonify({

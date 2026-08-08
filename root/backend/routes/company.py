@@ -48,7 +48,7 @@ def company_dashboard():
             "job_title": drive.job_title,
             "course": drive.course,
             "salary": drive.salary,
-            "application_deadline": drive.application_deadline,
+            "application_deadline": drive.application_deadline.strftime("%d %b %Y"),
             "approval_status": drive.approval_status,
             "status": drive.status,
             "applications": applications
@@ -126,6 +126,7 @@ def create_drive():
     
     uid = int(get_jwt_identity())
     role = get_jwt()["role"]
+    
     
     if "uid" not in session or role != "company":
         return jsonify({"message": "Unauthorized"}), 401

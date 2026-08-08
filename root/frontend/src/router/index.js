@@ -1,4 +1,4 @@
-import { createRouter,createWebHistory } from "vue-router"
+import { createRouter, createWebHistory } from "vue-router"
 
 
 import Login from "../views/login.vue"
@@ -12,55 +12,62 @@ import AdminStudents from "../views/admin/students.vue"
 import CompanyDashboard from "../views/company/dashboard.vue"
 import CreateDrive from "../views/company/create_drive.vue"
 
+import StudentDashboard from "../views/student/dashboard.vue"
 
 
-const router=createRouter({
 
-    history:createWebHistory(),
+const router = createRouter({
 
-    routes:[
+    history: createWebHistory(),
 
-    {
-        path: "/",
-        component: Login,
-        meta: { title: "Login" }
-    },
-    {
-        path: "/student/register",
-        component: StudentRegister,
-        meta: { title: "Student Registration" }
-    },
-    {
-        path: "/company/register",
-        component: CompanyRegister,
-        meta: { title: "Company Registration" }
-    },
-    {
-        path: "/admin",
-        component: AdminDashboard,
-        meta: { title: "Admin Dashboard" }
-    },
-    {
-        path:"/admin/companies",
-        component:AdminCompanies,
-        meta:{ title: "Companies" }
-    },
-    {
-        path:"/admin/students",
-        component:AdminStudents,
-        meta:{title:"Students"}
-    },
-    {
-        path:"/company",
-        component:CompanyDashboard,
-        meta:{title:"Company Dashboard"}
-    },
-    {
-        path:"/company/drive/create",
-        component:CreateDrive,
-        meta:{title:"Create Drive"}
-    }
-    
+    routes: [
+
+        {
+            path: "/",
+            component: Login,
+            meta: { title: "Login" }
+        },
+        {
+            path: "/student/register",
+            component: StudentRegister,
+            meta: { title: "Student Registration" }
+        },
+        {
+            path: "/company/register",
+            component: CompanyRegister,
+            meta: { title: "Company Registration" }
+        },
+        {
+            path: "/admin",
+            component: AdminDashboard,
+            meta: { title: "Admin Dashboard" }
+        },
+        {
+            path: "/admin/companies",
+            component: AdminCompanies,
+            meta: { title: "Companies" }
+        },
+        {
+            path: "/admin/students",
+            component: AdminStudents,
+            meta: { title: "Students" }
+        },
+        {
+            path: "/company",
+            component: CompanyDashboard,
+            meta: { title: "Company Dashboard" }
+        },
+        {
+            path: "/company/drive/create",
+            component: CreateDrive,
+            meta: { title: "Create Drive" }
+        },
+        {
+            path: "/student",
+            component: StudentDashboard,
+            meta: { title: "Student Dashboard" }
+        }
+
 
     ]
 
