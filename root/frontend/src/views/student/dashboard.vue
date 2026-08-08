@@ -63,8 +63,7 @@
 
                 <td>
                     <button @click="$router.push('/student/drive/' + drive.did)">View Details</button>
-                    <button v-if="!drive.applied"
-                        @click="$router.push('/student/drive/' + drive.did + '/apply')">Apply</button>
+                    <button v-if="!drive.applied" @click="apply(drive.did)">Apply</button>
                     <button v-else disabled>Already Applied</button>
                 </td>
 
@@ -85,7 +84,6 @@
 export default {
 
     data() {
-
         return {
             student: "",
             total_applications: 0,
@@ -95,7 +93,6 @@ export default {
             drives: [],
             search: ""
         }
-
     },
 
     methods: {
@@ -121,29 +118,44 @@ export default {
             this.interviews = data.interviews
             this.placements = data.placements
             this.drives = data.available_drives
-
         },
 
         clearSearch() {
-
             this.search = ""
             this.getDashboard()
+        },
 
+        async apply(did) {
+
+            let response = await fetch(
+                "http://127.0.0.1:5000/student/drive/" + did + "/apply",
+                {
+                    method: "POST",
+                    headers: {
+                        "Authorization":
+                            "Bearer " + localStorage.getItem("token")
+                    },
+                    credentials: "include"
+                }
+            )
+
+            let data = await response.json()
+
+            alert(data.message)
+
+            if (response.ok)
+                this.getDashboard()
         },
 
         logout() {
-
             localStorage.removeItem("token")
             this.$router.push("/")
-
         }
 
     },
 
     mounted() {
-
         this.getDashboard()
-
     }
 
 }

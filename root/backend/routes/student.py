@@ -144,7 +144,7 @@ def drive_details(did):
         "deadline":drive.application_deadline
     }),200
 
-@student.route("/student/apply/<int:did>", methods=["POST"])
+@student.route("/student/drive/<int:did>/apply", methods=["POST"])
 @jwt_required()
 def apply(did):
     
