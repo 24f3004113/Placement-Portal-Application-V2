@@ -82,9 +82,9 @@ def all_companies():
     search = request.args.get("search", "")
     approval_status = request.args.get("approval_status", "")
     blacklisted = request.args.get("blacklisted", "")
-
+    
     query = Company.query.join(User)
-
+    
     if search:
         query = query.filter(
             or_(
@@ -93,13 +93,13 @@ def all_companies():
                 Company.industry.contains(search)
             )
         )
-
+        
     if approval_status:
         query = query.filter(Company.approval_status == approval_status)
-
+        
     if blacklisted:
         query = query.filter(Company.blacklisted == (blacklisted == "true"))
-
+        
     companies = query.all()
     
     data = []
@@ -498,17 +498,17 @@ def drive_applications(did):
 @admin.route("/admin/applications", methods=["GET"])
 @jwt_required()
 def all_applications():
-
+    
     uid = int(get_jwt_identity())
     role = get_jwt()["role"]
-
+    
     if role != "admin":
         return jsonify({"message":"Unauthorized"}),401
-
+    
     search = request.args.get("search","")
-
+    
     query = Application.query.join(Student).join(Drive).join(Company)
-
+    
     if search:
         query = query.filter(
             or_(
@@ -518,11 +518,11 @@ def all_applications():
                 Student.course.contains(search)
             )
         )
-
+        
     applications = query.all()
-
+    
     data = []
-
+    
     for application in applications:
         data.append({
             "aid": application.aid,
@@ -536,7 +536,7 @@ def all_applications():
             "application_date": application.application_date.strftime("%d %b %Y"),
             "status": application.status
         })
-
+        
     return jsonify(data),200
 
 @admin.route("/admin/application/<int:aid>/history", methods=["GET"])

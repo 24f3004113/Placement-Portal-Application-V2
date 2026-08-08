@@ -67,7 +67,7 @@
 
             <td>
                 <button @click="$router.push('/company/drive/' + drive.did + '/edit')">Edit</button>
-                <button @click="$router.push('/company/drive/' + drive.did + '/applications')">View</button>
+                <button @click="$router.push('/company/drive/' + drive.did + '/applications')">View Applications</button>
             </td>
 
         </tr>

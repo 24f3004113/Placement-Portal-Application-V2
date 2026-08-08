@@ -1,5 +1,5 @@
 from flask import Blueprint, jsonify, session, request
-from db import db, User, Student, Company, Drive, Application, Interview, ApplicationHistory
+from db import db, User, Student, Company, Drive, Application, Interview, ApplicationHistory, Placement
 from sqlalchemy import or_
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from datetime import datetime
@@ -270,7 +270,7 @@ def drive_applications(did):
             "phone": application.student.phone,
             "course": application.student.course,
             "cgpa": application.student.cgpa,
-            "application_date": application.application_date,
+            "application_date": application.application_date.strftime("%d %b %Y"),
             "status": application.status
         })
         
@@ -279,6 +279,37 @@ def drive_applications(did):
         "drive": drive.job_title,
         "applications": data
     }), 200
+
+@company.route("/company/application/<int:aid>", methods=["GET"])
+@jwt_required()
+def application_details(aid):
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    company = Company.query.filter_by(user_id=uid).first()
+    
+    application = Application.query.get(aid)
+    
+    if application is None or application.drive.company_id != company.cid:
+        return jsonify({"message":"Application Not Found"}),404
+    
+    return jsonify({
+        "aid": application.aid,
+        "student": application.student.name,
+        "email": application.student.user.email,
+        "phone": application.student.phone,
+        "course": application.student.course,
+        "cgpa": application.student.cgpa,
+        "skills":application.student.skills,
+        "job_title": application.drive.job_title,
+        "application_date": application.application_date.strftime("%d %b %Y"),
+        "status": application.status,
+        "feedback": application.feedback
+    }),200
 
 @company.route("/company/application/<int:aid>/student", methods=["GET"])
 @jwt_required()
@@ -333,9 +364,32 @@ def update_application(aid):
     
     data = request.get_json()
     
-    application.status = data.get("status", application.status)
-    application.feedback = data.get("feedback", application.feedback)
+    status = data.get("status", application.status)
+    feedback = data.get("feedback", application.feedback)
     
+    application.status = status
+    application.feedback = feedback
+    
+    if status == "Selected":
+        
+        if not data.get("joining_date"):
+            return jsonify({"message":"Joining date is required for selected student."}),400
+            
+        joining_date = datetime.strptime(data.get("joining_date"),"%Y-%m-%d").date()
+        
+        placement = Placement.query.filter_by(application_id=application.aid).first()
+        
+        if placement is None:
+            placement = Placement(
+                application_id=application.aid,
+                student_id=application.student_id,
+                joining_date=joining_date
+            )
+            
+            db.session.add(placement)
+        else:
+            placement.joining_date = joining_date
+            
     history = ApplicationHistory(
         application_id = application.aid,
         status = application.status,
@@ -346,7 +400,9 @@ def update_application(aid):
     
     db.session.commit()
     
-    return jsonify({"message":"Application Updated Successfully"}),200
+    return jsonify({
+        "message":"Application Updated Successfully"
+    }),200
 
 @company.route("/company/application/<int:aid>/history", methods=["GET"])
 @jwt_required()
@@ -394,15 +450,15 @@ def schedule_interview(aid):
     if application is None or application.drive.company_id != company.cid:
         return jsonify({"message":"Application Not Found"}),404
     
-    if application.status != "Shortlisted":
-        return jsonify({"message": "Only shortlisted students can be scheduled for interview."}), 400
+    if Interview.query.filter_by(application_id=aid).first():
+        return jsonify({"message":"Interview already scheduled."}),400
     
     data = request.get_json()
     
     interview = Interview(
         application_id=aid,
-        interview_date=data.get("interview_date"),
-        interview_time=data.get("interview_time"),
+        interview_date=datetime.strptime(data.get("interview_date"),"%Y-%m-%d").date(),
+        interview_time=datetime.strptime(data.get("interview_time"),"%H:%M").time(),
         interview_mode=data.get("interview_mode"),
         interview_link=data.get("interview_link"),
         interview_location=data.get("interview_location"),
@@ -412,6 +468,14 @@ def schedule_interview(aid):
     db.session.add(interview)
     
     application.status = "Interview"
+    
+    history = ApplicationHistory(
+        application_id=aid,
+        status=application.status,
+        feedback=application.feedback
+    )
+    
+    db.session.add(history)
     
     db.session.commit()
     
