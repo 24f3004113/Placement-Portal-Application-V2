@@ -13,28 +13,33 @@ const router=createRouter({
 
     routes:[
 
-        {
-            path:"/",
-            component:Login
-        },
-
-        {
-            path: "/student/register",
-            component: StudentRegister
-        },
-
-        {
-            path:"/company/register",
-            component:CompanyRegister
-        },
-
-        {
-            path:"/admin",
-            component:AdminDashboard
-        }
+    {
+        path: "/",
+        component: Login,
+        meta: { title: "Login" }
+    },
+    {
+        path: "/student/register",
+        component: StudentRegister,
+        meta: { title: "Student Registration" }
+    },
+    {
+        path: "/company/register",
+        component: CompanyRegister,
+        meta: { title: "Company Registration" }
+    },
+    {
+        path: "/admin",
+        component: AdminDashboard,
+        meta: { title: "Admin Dashboard" }
+    }
 
     ]
 
+})
+
+router.afterEach((to) => {
+    document.title = to.meta.title || "Placement Portal"
 })
 
 export default router

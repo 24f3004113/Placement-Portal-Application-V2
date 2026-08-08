@@ -63,7 +63,7 @@ export default{
 
             let data=await response.json()
 
-
+            localStorage.setItem("token", data.data.access_token)
 
             this.message = data.message
 
