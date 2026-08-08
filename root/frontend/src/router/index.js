@@ -10,6 +10,7 @@ import AdminCompanies from "../views/admin/companies.vue"
 import AdminStudents from "../views/admin/students.vue"
 
 import CompanyDashboard from "../views/company/dashboard.vue"
+import CreateDrive from "../views/company/create_drive.vue"
 
 
 
@@ -53,7 +54,13 @@ const router=createRouter({
         path:"/company",
         component:CompanyDashboard,
         meta:{title:"Company Dashboard"}
+    },
+    {
+        path:"/company/drive/create",
+        component:CreateDrive,
+        meta:{title:"Create Drive"}
     }
+    
 
     ]
 
