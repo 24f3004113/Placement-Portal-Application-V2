@@ -5,31 +5,31 @@
 <form @submit.prevent="register">
 
     <label>Email</label>
-    <input type="email" placeholder="Enter your Email" v-model="email" required>
+    <input type="email" placeholder="Enter your Email" v-model="form.email" required>
     <br><br>
 
     <label>Password</label>
-    <input type="password" placeholder="Create your Password" v-model="password" required>
+    <input type="password" placeholder="Create your Password" v-model="form.password" required>
     <br><br>
 
     <label>Company Name</label>
-    <input type="text" placeholder="Enter Company Name" v-model="company_name" required>
+    <input type="text" placeholder="Enter Company Name" v-model="form.company_name" required>
     <br><br>
 
     <label>Industry</label>
-    <input type="text" placeholder="Enter Company's Industry" v-model="industry" required>
+    <input type="text" placeholder="Enter Company's Industry" v-model="form.industry" required>
     <br><br>
 
     <label>Location</label>
-    <input type="text" placeholder="Enter Company Location" v-model="location" required>
+    <input type="text" placeholder="Enter Company Location" v-model="form.location" required>
     <br><br>
 
     <label>HR Contact</label>
-    <input type="text" placeholder="Enter HR Contact" v-model="hr_contact" required>
+    <input type="text" placeholder="Enter HR Contact" v-model="form.hr_contact" required>
     <br><br>
 
     <label>Website</label>
-    <input type="text" placeholder="Enter Company's Website" v-model="website">
+    <input type="text" placeholder="Enter Company's Website" v-model="form.website">
     <br><br>
 
     <button type="submit">Register</button>
@@ -49,14 +49,15 @@ export default{
     data(){
 
         return{
-
-            email:"",
-            password:"",
-            company_name:"",
-            industry:"",
-            location:"",
-            hr_contact:"",
-            website:"",
+            form:{
+                email:"",
+                password:"",
+                company_name:"",
+                industry:"",
+                location:"",
+                hr_contact:"",
+                website:""
+            },
             message:""
 
         }

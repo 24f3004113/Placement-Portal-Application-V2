@@ -1,16 +1,17 @@
 <template>
 
+
 <h2>Placement Portal</h2>
 
 <form @submit.prevent="login">
 
 <label>Email</label>
-<input type="email" placeholder="Enter your Email" v-model="email" required>
+<input type="email" placeholder="Email" v-model="form.email" required>
 
 <br><br>
 
 <label>Password</label>
-<input type="password" placeholder="Enter your Password" v-model="password" required>
+<input type="password" placeholder="Password" v-model="form.password" required>
 
 <br><br>
 
@@ -36,9 +37,10 @@ export default{
     data(){
 
         return{
-
+            from:{
             email:"",
-            password:"",
+            password:""
+            },
             message:""
 
         }
@@ -59,12 +61,7 @@ export default{
 
                 credentials:"include",
 
-                body:JSON.stringify({
-
-                    email:this.email,
-                    password:this.password
-
-                })
+                body:JSON.stringify(this.form)
 
             })
 

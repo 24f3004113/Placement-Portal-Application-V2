@@ -5,35 +5,35 @@
 <form @submit.prevent="register">
 
     <label>Name</label>
-    <input type="text" placeholder="Enter your Name" v-model="name" required>
+    <input type="text" placeholder="Enter your Name" v-model="form.name" required>
     <br><br>
 
     <label>Email</label>
-    <input type="email" placeholder="Enter your Email" v-model="email" required>
+    <input type="email" placeholder="Enter your Email" v-model="form.email" required>
     <br><br>
 
     <label>Password</label>
-    <input type="password" placeholder="Create Password" v-model="password" required>
+    <input type="password" placeholder="Create Password" v-model="form.password" required>
     <br><br>
 
     <label>Phone Number</label>
-    <input type="text" placeholder="Enter your Phone Number" v-model="phone" required>
+    <input type="text" placeholder="Enter your Phone Number" v-model="form.phone" required>
     <br><br>
 
     <label>Course</label>
-    <input type="text" placeholder="Enter Studied Course" v-model="course" required>
+    <input type="text" placeholder="Enter Studied Course" v-model="form.course" required>
     <br><br>
 
     <label>CGPA</label>
-    <input type="number" step="0.01" placeholder="Enter your CGPA" v-model="cgpa" required>
+    <input type="number" step="0.01" placeholder="Enter your CGPA" v-model="form.cgpa" required>
     <br><br>
 
     <label>Graduation Year</label>
-    <input type="number" placeholder="Enter your Graduation Year" v-model="graduation_year" required>
+    <input type="number" placeholder="Enter your Graduation Year" v-model="form.graduation_year" required>
     <br><br>
 
     <label>Skills</label>
-    <input type="text" placeholder="List your Skills" v-model="skills">
+    <input type="text" placeholder="List your Skills" v-model="form.skills">
     <br><br>
 
     <button type="submit">Register</button>
@@ -53,17 +53,17 @@ export default{
     data(){
 
         return{
-
-            email:"",
-            password:"",
-            name:"",
-            phone:"",
-            course:"",
-            cgpa:"",
-            graduation_year:"",
-            skills:"",
+            from:{
+                email:"",
+                password:"",
+                name:"",
+                phone:"",
+                course:"",
+                cgpa:"",
+                graduation_year:"",
+                skills:""
+            },
             message:""
-
         }
 
     },
@@ -80,18 +80,7 @@ export default{
                     "Content-Type":"application/json"
                 },
 
-                body:JSON.stringify({
-
-                    email:this.email,
-                    password:this.password,
-                    name:this.name,
-                    phone:this.phone,
-                    course:this.course,
-                    cgpa:this.cgpa,
-                    graduation_year:this.graduation_year,
-                    skills:this.skills
-
-                })
+                body:JSON.stringify(this.form)
 
             })
 
