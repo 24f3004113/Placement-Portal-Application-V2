@@ -5,6 +5,7 @@ import StudentRegister from "../views/student_register.vue"
 import CompanyRegister from "../views/company_register.vue"
 
 import AdminDashboard from "../views/admin/dashboard.vue"
+import AdminCompanies from "../views/admin/companies.vue"
 
 
 const router=createRouter({
@@ -32,6 +33,11 @@ const router=createRouter({
         path: "/admin",
         component: AdminDashboard,
         meta: { title: "Admin Dashboard" }
+    },
+    {
+        path:"/admin/companies",
+        component:AdminCompanies,
+        meta:{ title: "Companies" }
     }
 
     ]
@@ -40,6 +46,20 @@ const router=createRouter({
 
 router.afterEach((to) => {
     document.title = to.meta.title || "Placement Portal"
+})
+
+router.beforeEach((to) => {
+
+    const publicPages = [
+        "/",
+        "/student/register",
+        "/company/register"
+    ]
+
+    if (!publicPages.includes(to.path) && !localStorage.getItem("token")) {
+        return "/"
+    }
+
 })
 
 export default router
