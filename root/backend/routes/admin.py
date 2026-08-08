@@ -80,17 +80,27 @@ def all_companies():
         return jsonify({"message":"Unauthorized"}),401
     
     search = request.args.get("search", "")
-    
+    approval_status = request.args.get("approval_status", "")
+    blacklisted = request.args.get("blacklisted", "")
+
+    query = Company.query.join(User)
+
     if search:
-        companies = Company.query.join(User).filter(
+        query = query.filter(
             or_(
                 Company.company_name.contains(search),
                 User.email.contains(search),
                 Company.industry.contains(search)
             )
-        ).all()
-    else:
-        companies = Company.query.all()
+        )
+
+    if approval_status:
+        query = query.filter(Company.approval_status == approval_status)
+
+    if blacklisted:
+        query = query.filter(Company.blacklisted == (blacklisted == "true"))
+
+    companies = query.all()
     
     data = []
     

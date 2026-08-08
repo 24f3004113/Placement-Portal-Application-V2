@@ -4,7 +4,20 @@
 
 <input type="text" placeholder="Search" v-model="search" @input="getCompanies">
 
-<br><br>
+<select v-model="approvalFilter" @change="getCompanies">
+    <option value="">All Approval Status</option>
+    <option value="Pending">Pending</option>
+    <option value="Approved">Approved</option>
+    <option value="Rejected">Rejected</option>
+</select>
+
+<select v-model="blockedFilter" @change="getCompanies">
+    <option value="">All</option>
+    <option value="true">Blocked</option>
+    <option value="false">Not Blocked</option>
+</select>
+
+<button @click="clearFilters">Clear</button>
 
 <table border="1">
 
@@ -25,8 +38,11 @@
     </thead>
 
     <tbody>
+        <tr v-if="companies.length == 0">
+            <td colspan="11" class="text-xxl-center">No companies found</td>
+        </tr>
 
-        <tr v-for="company in companies" :key="company.cid">
+        <tr v-else v-for="company in companies" :key="company.cid">
 
             <td>{{ company.cid }}</td>
             <td>{{ company.company_name }}</td>
@@ -68,7 +84,9 @@ export default{
 
         return{
             companies:[],
-            search:""
+            search:"",
+            approvalFilter:"",
+            blockedFilter:""
         }
 
     },
@@ -78,7 +96,9 @@ export default{
         async getCompanies(){
 
             let response=await fetch(
-                "http://127.0.0.1:5000/admin/companies?search="+this.search,
+                "http://127.0.0.1:5000/admin/companies?search="+this.search+
+                "&approval_status="+this.approvalFilter+
+                "&blacklisted="+this.blockedFilter,
                 {
                     headers:{
                         "Authorization":"Bearer "+localStorage.getItem("token")
@@ -149,6 +169,15 @@ export default{
                     }
                 }
             )
+
+            this.getCompanies()
+
+        },
+        clearFilters(){
+
+            this.search=""
+            this.approvalFilter=""
+            this.blockedFilter=""
 
             this.getCompanies()
 
