@@ -2,23 +2,30 @@
 
 <h2>Placement Portal</h2>
 
-<input type="email" placeholder="Email" v-model="email">
+<form @submit.prevent="login">
+
+<label>Email</label>
+<input type="email" placeholder="Enter your Email" v-model="email" required>
 
 <br><br>
 
-<input type="password" placeholder="Password" v-model="password">
+<label>Password</label>
+<input type="password" placeholder="Enter your Password" v-model="password" required>
 
 <br><br>
 
-<button @click="login">Login</button>
+<button type="submit">Login</button>
+
+</form>
+
+<br>
 
 <button @click="$router.push('/student/register')">Student Register</button>
-
 <button @click="$router.push('/company/register')">Company Register</button>
 
 <br><br>
 
-<p>{{message}}</p>
+<p>{{ message }}</p>
 
 </template>
 

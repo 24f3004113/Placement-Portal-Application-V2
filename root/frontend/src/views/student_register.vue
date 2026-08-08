@@ -2,35 +2,47 @@
 
 <h2>Student Registration</h2>
 
-<input type="text" placeholder="Enter your Name" v-model="name">
-<br><br>
+<form @submit.prevent="register">
 
-<input type="email" placeholder="Enter your Email" v-model="email">
-<br><br>
+    <label>Name</label>
+    <input type="text" placeholder="Enter your Name" v-model="name" required>
+    <br><br>
 
-<input type="password" placeholder="Create Password" v-model="password">
-<br><br>
+    <label>Email</label>
+    <input type="email" placeholder="Enter your Email" v-model="email" required>
+    <br><br>
 
-<input type="text" placeholder="Enter your Phone Number" v-model="phone">
-<br><br>
+    <label>Password</label>
+    <input type="password" placeholder="Create Password" v-model="password" required>
+    <br><br>
 
-<input type="text" placeholder="Enter Studied Course" v-model="course">
-<br><br>
+    <label>Phone Number</label>
+    <input type="text" placeholder="Enter your Phone Number" v-model="phone" required>
+    <br><br>
 
-<input type="number" placeholder="Ente your CGPA" v-model="cgpa">
-<br><br>
+    <label>Course</label>
+    <input type="text" placeholder="Enter Studied Course" v-model="course" required>
+    <br><br>
 
-<input type="number" placeholder="Enter your Graduation Year" v-model="graduation_year">
-<br><br>
+    <label>CGPA</label>
+    <input type="number" step="0.01" placeholder="Enter your CGPA" v-model="cgpa" required>
+    <br><br>
 
-<input type="text" placeholder="List your Skills" v-model="skills">
-<br><br>
+    <label>Graduation Year</label>
+    <input type="number" placeholder="Enter your Graduation Year" v-model="graduation_year" required>
+    <br><br>
 
-<button @click="register">Register</button>
+    <label>Skills</label>
+    <input type="text" placeholder="List your Skills" v-model="skills">
+    <br><br>
 
-<br><br>
+    <button type="submit">Register</button>
 
-<p>{{message}}</p>
+</form>
+
+<br>
+
+<p>{{ message }}</p>
 
 </template>
 

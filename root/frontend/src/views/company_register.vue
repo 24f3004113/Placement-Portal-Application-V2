@@ -2,32 +2,43 @@
 
 <h2>Company Registration</h2>
 
-<input type="email" placeholder="Enter your Email" v-model="email">
-<br><br>
+<form @submit.prevent="register">
 
-<input type="password" placeholder="Create your Password" v-model="password">
-<br><br>
+    <label>Email</label>
+    <input type="email" placeholder="Enter your Email" v-model="email" required>
+    <br><br>
 
-<input type="text" placeholder="Enter Company Name" v-model="company_name">
-<br><br>
+    <label>Password</label>
+    <input type="password" placeholder="Create your Password" v-model="password" required>
+    <br><br>
 
-<input type="text" placeholder="Enter Company's Industry" v-model="industry">
-<br><br>
+    <label>Company Name</label>
+    <input type="text" placeholder="Enter Company Name" v-model="company_name" required>
+    <br><br>
 
-<input type="text" placeholder="Enter Company Location" v-model="location">
-<br><br>
+    <label>Industry</label>
+    <input type="text" placeholder="Enter Company's Industry" v-model="industry" required>
+    <br><br>
 
-<input type="text" placeholder="Enter HR Contact" v-model="hr_contact">
-<br><br>
+    <label>Location</label>
+    <input type="text" placeholder="Enter Company Location" v-model="location" required>
+    <br><br>
 
-<input type="text" placeholder="Enter Company's Website" v-model="website">
-<br><br>
+    <label>HR Contact</label>
+    <input type="text" placeholder="Enter HR Contact" v-model="hr_contact" required>
+    <br><br>
 
-<button @click="register">Register</button>
+    <label>Website</label>
+    <input type="text" placeholder="Enter Company's Website" v-model="website">
+    <br><br>
 
-<br><br>
+    <button type="submit">Register</button>
 
-<p>{{message}}</p>
+</form>
+
+<br>
+
+<p>{{ message }}</p>
 
 </template>
 
