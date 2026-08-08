@@ -37,7 +37,7 @@ export default{
     data(){
 
         return{
-            from:{
+            form:{
             email:"",
             password:""
             },
