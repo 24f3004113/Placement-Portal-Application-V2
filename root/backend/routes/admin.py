@@ -305,6 +305,10 @@ def student_applications(sid):
         
     return jsonify({
         "student": student.name,
+        "email": student.user.email,
+        "phone": student.phone,
+        "course": student.course,
+        "cgpa": student.cgpa,
         "applications": data
     }),200
 
@@ -479,6 +483,8 @@ def drive_applications(did):
             "phone": application.student.phone,
             "course": application.student.course,
             "cgpa": application.student.cgpa,
+            "company": application.drive.company.company_name,
+            "job_title": application.drive.job_title,
             "application_date": application.application_date.strftime("%d %b %Y"),
             "status": application.status
         })
@@ -488,6 +494,50 @@ def drive_applications(did):
         "company": drive.company.company_name,
         "applications": data
     }), 200
+
+@admin.route("/admin/applications", methods=["GET"])
+@jwt_required()
+def all_applications():
+
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
+
+    search = request.args.get("search","")
+
+    query = Application.query.join(Student).join(Drive).join(Company)
+
+    if search:
+        query = query.filter(
+            or_(
+                Student.name.contains(search),
+                Drive.job_title.contains(search),
+                Company.company_name.contains(search),
+                Student.course.contains(search)
+            )
+        )
+
+    applications = query.all()
+
+    data = []
+
+    for application in applications:
+        data.append({
+            "aid": application.aid,
+            "student": application.student.name,
+            "email": application.student.user.email,
+            "phone": application.student.phone,
+            "course": application.student.course,
+            "cgpa": application.student.cgpa,
+            "company": application.drive.company.company_name,
+            "job_title": application.drive.job_title,
+            "application_date": application.application_date.strftime("%d %b %Y"),
+            "status": application.status
+        })
+
+    return jsonify(data),200
 
 @admin.route("/admin/application/<int:aid>/history", methods=["GET"])
 @jwt_required()
