@@ -7,6 +7,7 @@ import CompanyRegister from "../views/company_register.vue"
 
 import AdminDashboard from "../views/admin/dashboard.vue"
 import AdminCompanies from "../views/admin/companies.vue"
+import AdminStudents from "../views/admin/students.vue"
 
 
 const router=createRouter({
@@ -39,6 +40,11 @@ const router=createRouter({
         path:"/admin/companies",
         component:AdminCompanies,
         meta:{ title: "Companies" }
+    },
+    {
+        path:"/admin/students",
+        component:AdminStudents,
+        meta:{title:"Students"}
     }
 
     ]
