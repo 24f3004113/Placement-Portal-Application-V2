@@ -1,80 +1,85 @@
 <template>
 
-<h2>Drive Applications</h2>
+    <h2>Drive Applications</h2>
 
-<table v-if="drive">
+    <table v-if="drive">
 
-<tr>
-    <td>Company:</td>
-    <td>{{ company }}</td>
-</tr>
+        <tr>
+            <td>Company:</td>
+            <td>{{ company }}</td>
+        </tr>
 
-<tr>
-    <td>Job Title:</td>
-    <td>{{ drive }}</td>
-</tr>
+        <tr>
+            <td>Job Title:</td>
+            <td>{{ drive }}</td>
+        </tr>
 
-</table>
+    </table>
 
-<br>
+    <br>
 
-<table border="1">
+    <table border="1">
 
-<thead>
-<tr>
-    <th>ID</th>
-    <th>Student</th>
-    <th>Email</th>
-    <th>Phone</th>
-    <th>Course</th>
-    <th>CGPA</th>
-    <th>Application Date</th>
-    <th>Status</th>
-    <th>Actions</th>
-</tr>
-</thead>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Course</th>
+                <th>CGPA</th>
+                <th>Application Date</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
 
-<tbody>
+        <tbody>
 
-<tr v-if="applications.length == 0">
-    <td colspan="9">No applications found</td>
-</tr>
+            <tr v-if="applications.length == 0">
+                <td colspan="9">No applications found</td>
+            </tr>
 
-<tr v-for="application in applications" :key="application.aid">
+            <tr v-for="application in applications" :key="application.aid">
 
-    <td>{{ application.aid }}</td>
-    <td>{{ application.student }}</td>
-    <td>{{ application.email }}</td>
-    <td>{{ application.phone }}</td>
-    <td>{{ application.course }}</td>
-    <td>{{ application.cgpa }}</td>
-    <td>{{ application.application_date }}</td>
-    <td>{{ application.status }}</td>
+                <td>{{ application.aid }}</td>
+                <td>{{ application.student }}</td>
+                <td>{{ application.email }}</td>
+                <td>{{ application.phone }}</td>
+                <td>{{ application.course }}</td>
+                <td>{{ application.cgpa }}</td>
+                <td>{{ application.application_date }}</td>
+                <td>{{ application.status }}</td>
 
-    <td>
-        <button @click="$router.push('/company/application/' + application.aid + '/update')">
-            Update
-        </button>
+                <td>
+                    <button @click="$router.push('/company/application/' + application.aid + '/update')">
+                        Update
+                    </button>
 
-        <button
-            v-if="application.status == 'Shortlisted'"
-            @click="$router.push('/company/application/' + application.aid + '/interview')">
-            Schedule Interview
-        </button>
+                    <button v-if="application.status == 'Shortlisted'"
+                        @click="$router.push('/company/application/' + application.aid + '/interview')">
+                        Schedule Interview
+                    </button>
 
-    </td>
+                    <button v-if="application.status == 'Interview'"
+                        @click="$router.push('/company/application/' + application.aid + '/interview/update')">
+                        View / Update Interview
+                    </button>
 
-</tr>
 
-</tbody>
+                </td>
 
-</table>
+            </tr>
 
-<br>
+        </tbody>
 
-<button @click="$router.back()">Back</button>
+    </table>
 
-<p>{{ message }}</p>
+    <br>
+
+    <button @click="$router.back()">Back</button>
+
+    <p>{{ message }}</p>
 
 </template>
 

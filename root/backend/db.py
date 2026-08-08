@@ -102,6 +102,7 @@ class Placement(db.Model):
     student_id = db.Column(db.Integer, db.ForeignKey("student.sid"), nullable=False)
     company_id = db.Column(db.Integer, db.ForeignKey("company.cid"), nullable=False)
     drive_id = db.Column(db.Integer, db.ForeignKey("drive.did"), nullable=False)
+    application_id = db.Column(db.Integer, db.ForeignKey("application.aid"), nullable=False)
     position = db.Column(db.String(100))
     salary = db.Column(db.Integer)
     joining_date = db.Column(db.Date)
@@ -109,6 +110,7 @@ class Placement(db.Model):
     student = db.relationship("Student", backref="placement")
     company = db.relationship("Company", backref="placement")
     drive = db.relationship("Drive", backref="placement")
+    application = db.relationship("Application",backref="placement")
 
 class Interview(db.Model):
     

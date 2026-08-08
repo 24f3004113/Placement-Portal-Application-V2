@@ -370,24 +370,32 @@ def update_application(aid):
     application.status = status
     application.feedback = feedback
     
-    if status == "Selected":
-        
+    if application.status == "Selected":
         if not data.get("joining_date"):
-            return jsonify({"message":"Joining date is required for selected student."}),400
+            return jsonify({
+                "message": "Joining date is required for selected student."
+            }),400
             
         joining_date = datetime.strptime(data.get("joining_date"),"%Y-%m-%d").date()
         
         placement = Placement.query.filter_by(application_id=application.aid).first()
         
         if placement is None:
+            
             placement = Placement(
-                application_id=application.aid,
                 student_id=application.student_id,
+                company_id=application.drive.company_id,
+                drive_id=application.drive.did,
+                application_id=application.aid,
+                position=application.drive.job_title,
+                salary=application.drive.salary,
                 joining_date=joining_date
             )
-            
+
             db.session.add(placement)
+
         else:
+
             placement.joining_date = joining_date
             
     history = ApplicationHistory(
@@ -481,6 +489,39 @@ def schedule_interview(aid):
     
     return jsonify({"message":"Interview Scheduled Successfully"}),201
 
+@company.route("/company/application/<int:aid>/interview", methods=["GET"])
+@jwt_required()
+def get_interview(aid):
+
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+
+    if "uid" not in session or role != "company":
+        return jsonify({"message":"Unauthorized"}),401
+
+    company = Company.query.filter_by(user_id=uid).first()
+
+    application = Application.query.get(aid)
+
+    if application is None or application.drive.company_id != company.cid:
+        return jsonify({"message":"Application Not Found"}),404
+
+    interview = Interview.query.filter_by(application_id=aid).first()
+
+    if interview is None:
+        return jsonify({"message":"Interview Not Found"}),404
+
+    return jsonify({
+        "iid": interview.iid,
+        "application_id": interview.application_id,
+        "interview_date": interview.interview_date.strftime("%Y-%m-%d"),
+        "interview_time": interview.interview_time.strftime("%H:%M"),
+        "interview_mode": interview.interview_mode,
+        "interview_link": interview.interview_link,
+        "interview_location": interview.interview_location,
+        "remarks": interview.remarks
+    }),200
+
 @company.route("/company/interview/<int:iid>/update", methods=["PUT"])
 @jwt_required()
 def update_interview(iid):
@@ -500,8 +541,12 @@ def update_interview(iid):
     
     data = request.get_json()
     
-    interview.interview_date = data.get("interview_date", interview.interview_date)
-    interview.interview_time = data.get("interview_time", interview.interview_time)
+    if data.get("interview_date"):
+        interview.interview_date = datetime.strptime(data.get("interview_date"),"%Y-%m-%d").date()
+
+    if data.get("interview_time"):
+        interview.interview_time = datetime.strptime(data.get("interview_time"),"%H:%M").time()
+    
     interview.interview_mode = data.get("interview_mode", interview.interview_mode)
     interview.interview_link = data.get("interview_link", interview.interview_link)
     interview.interview_location = data.get("interview_location", interview.interview_location)
