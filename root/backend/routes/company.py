@@ -109,7 +109,9 @@ def update_company_profile():
     
     data = request.get_json()
     
-    company.user.password = data.get("password", company.user.password)
+    if data.get("password"):
+        company.user.password = data.get("password")
+    
     company.user.email = data.get("email", company.user.email)
     
     company.company_name = data.get("company_name", company.company_name)
@@ -119,6 +121,7 @@ def update_company_profile():
     company.website = data.get("website", company.website)
     
     db.session.commit()
+
     return jsonify({"message":"Profile Updated Successfully"}),200
 
 @company.route("/company/create_drive", methods=["POST"])
