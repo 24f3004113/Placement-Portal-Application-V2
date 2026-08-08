@@ -233,6 +233,81 @@ def unblacklist_company(cid):
     
     return jsonify({"message": "Company Unblacklisted Successfully"}), 200
 
+@admin.route("/admin/student/<int:sid>/blacklist", methods=["PUT"])
+@jwt_required()
+def blacklist_student(sid):
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    student = Student.query.get(sid)
+    
+    if student is None:
+        return jsonify({"message":"Student Not Found"}),404
+    
+    student.blacklisted = True
+    db.session.commit()
+    
+    return jsonify({"message":"Student Blacklisted Successfully"}),200
+
+
+@admin.route("/admin/student/<int:sid>/unblacklist", methods=["PUT"])
+@jwt_required()
+def unblacklist_student(sid):
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    student = Student.query.get(sid)
+    
+    if student is None:
+        return jsonify({"message":"Student Not Found"}),404
+    
+    student.blacklisted = False
+    db.session.commit()
+    
+    return jsonify({"message":"Student Unblacklisted Successfully"}),200
+
+@admin.route("/admin/student/<int:sid>/applications", methods=["GET"])
+@jwt_required()
+def student_applications(sid):
+    
+    
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    student = Student.query.get(sid)
+    
+    if student is None:
+        return jsonify({"message":"Student Not Found"}),404
+    
+    applications = Application.query.filter_by(student_id=sid).all()
+    
+    data = []
+    
+    for application in applications:
+        data.append({
+            "aid": application.aid,
+            "company": application.drive.company.company_name,
+            "job_title": application.drive.job_title,
+            "course": application.drive.course,
+            "application_date": application.application_date,
+            "status": application.status
+        })
+        
+    return jsonify({
+        "student": student.name,
+        "applications": data
+    }),200
+
 @admin.route("/admin/drives", methods=["GET"])
 @jwt_required()
 def all_drives():
