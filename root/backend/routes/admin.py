@@ -335,6 +335,8 @@ def all_drives():
     data = []
     
     for drive in drives:
+        applications = Application.query.filter_by(drive_id=drive.did).count()
+        
         data.append({
             "did": drive.did,
             "company": drive.company.company_name,
@@ -342,9 +344,10 @@ def all_drives():
             "course": drive.course,
             "min_cgpa": drive.min_cgpa,
             "salary": drive.salary,
-            "application_deadline": drive.application_deadline,
+            "application_deadline": drive.application_deadline.strftime("%d %b %Y"),
             "approval_status": drive.approval_status,
-            "status": drive.status
+            "status": drive.status,
+            "applications": applications
         })
         
     return jsonify(data), 200

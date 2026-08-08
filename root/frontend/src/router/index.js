@@ -8,6 +8,7 @@ import CompanyRegister from "../views/company_register.vue"
 import AdminDashboard from "../views/admin/dashboard.vue"
 import AdminCompanies from "../views/admin/companies.vue"
 import AdminStudents from "../views/admin/students.vue"
+import AdminDrives from "../views/admin/drives.vue"
 
 import CompanyDashboard from "../views/company/dashboard.vue"
 import CreateDrive from "../views/company/create_drive.vue"
@@ -53,6 +54,11 @@ const router = createRouter({
             path: "/admin/students",
             component: AdminStudents,
             meta: { title: "Students" }
+        },
+        {
+            path: "/admin/drives",
+            component: AdminDrives,
+            meta: { title: "Placement Drives" }
         },
         {
             path: "/company",
