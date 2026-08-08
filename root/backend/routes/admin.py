@@ -299,7 +299,7 @@ def student_applications(sid):
             "company": application.drive.company.company_name,
             "job_title": application.drive.job_title,
             "course": application.drive.course,
-            "application_date": application.application_date,
+            "application_date": application.application_date.strftime("%d %b %Y"),
             "status": application.status
         })
         
@@ -431,7 +431,7 @@ def company_drives(cid):
             "course": drive.course,
             "min_cgpa": drive.min_cgpa,
             "salary": drive.salary,
-            "application_deadline": drive.application_deadline,
+            "application_deadline": drive.application_deadline.strftime("%d %b %Y"),
             "approval_status": drive.approval_status,
             "status": drive.status
         })
@@ -479,7 +479,7 @@ def drive_applications(did):
             "phone": application.student.phone,
             "course": application.student.course,
             "cgpa": application.student.cgpa,
-            "application_date": application.application_date,
+            "application_date": application.application_date.strftime("%d %b %Y"),
             "status": application.status
         })
         
