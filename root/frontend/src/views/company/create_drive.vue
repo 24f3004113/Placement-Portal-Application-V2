@@ -12,19 +12,19 @@
 <textarea placeholder="Description" v-model="form.description" required></textarea>
 <br><br>
 
-<label>Course</label>
+<label>Required Courses </label>
 <input type="text" placeholder="Course" v-model="form.course" required>
 <br><br>
 
-<label>Minimum CGPA</label>
+<label>Required Minimum CGPA </label>
 <input type="number" step="0.01" placeholder="Minimum CGPA" v-model="form.min_cgpa" required>
 <br><br>
 
-<label>Graduation Year</label>
-<input type="number" placeholder="Graduation Year" v-model="form.graduation_year" required>
+<label>Required Graduation Year</label>
+<input type="number" placeholder="Graduation Year" v-model="form.graduation_year" required >
 <br><br>
 
-<label>Salary</label>
+<label>Offering Salary</label>
 <input type="number" placeholder="Salary" v-model="form.salary" required>
 <br><br>
 
