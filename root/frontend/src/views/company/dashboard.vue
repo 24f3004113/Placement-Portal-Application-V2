@@ -2,6 +2,8 @@
 
 <h2>{{ company.company_name }} Dashboard</h2>
 
+<button @click="$router.push('/company/profile')">Update Profile</button>
+
 <table border="1">
 
     <thead>
@@ -64,6 +66,7 @@
             <td>{{ drive.applications }}</td>
 
             <td>
+                <button @click="$router.push('/company/drive/' + drive.did + '/edit')">Edit</button>
                 <button @click="$router.push('/company/drive/' + drive.did + '/applications')">View</button>
             </td>
 

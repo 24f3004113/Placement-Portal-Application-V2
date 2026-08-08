@@ -83,6 +83,7 @@ def company_profile():
         return jsonify({"message":"Company Not Found"}),404
     
     return jsonify({
+        "email" : company.user.email,
         "company_name":company.company_name,
         "industry":company.industry,
         "location":company.location,
@@ -156,6 +157,37 @@ def create_drive():
     
     return jsonify({"message": "Placement Drive Created Successfully."}), 201
 
+@company.route("/company/drive/<int:did>", methods=["GET"])
+@jwt_required()
+def get_drive(did):
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "company":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    company = Company.query.filter_by(user_id=uid).first()
+    
+    drive = Drive.query.filter_by(
+        did=did,
+        company_id=company.cid
+    ).first()
+    
+    if drive is None:
+        return jsonify({"message":"Drive Not Found"}),404
+    
+    return jsonify({
+        "job_title": drive.job_title,
+        "description": drive.description,
+        "course": drive.course,
+        "min_cgpa": drive.min_cgpa,
+        "graduation_year": drive.graduation_year,
+        "salary": drive.salary,
+        "application_deadline": drive.application_deadline.strftime("%Y-%m-%d"),
+        "status": drive.status
+    }),200
+
 @company.route("/company/edit_drive/<int:did>", methods=["PUT"])
 @jwt_required()
 def edit_drive(did):
@@ -180,7 +212,10 @@ def edit_drive(did):
     drive.min_cgpa = data.get("min_cgpa", drive.min_cgpa)
     drive.graduation_year = data.get("graduation_year", drive.graduation_year)
     drive.salary = data.get("salary", drive.salary)
-    drive.application_deadline = data.get("application_deadline", drive.application_deadline)
+    if data.get("application_deadline"):
+        drive.application_deadline = datetime.strptime(data.get("application_deadline"),"%Y-%m-%d").date()
+    
+    drive.status = data.get("status", drive.status)
     
     db.session.commit()
     

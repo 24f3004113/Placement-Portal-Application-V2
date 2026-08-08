@@ -11,6 +11,8 @@ import AdminStudents from "../views/admin/students.vue"
 
 import CompanyDashboard from "../views/company/dashboard.vue"
 import CreateDrive from "../views/company/create_drive.vue"
+import CompanyProfile from "../views/company/profile.vue"
+import EditDrive from "../views/company/edit_drive.vue"
 
 import StudentDashboard from "../views/student/dashboard.vue"
 
@@ -61,6 +63,16 @@ const router = createRouter({
             path: "/company/drive/create",
             component: CreateDrive,
             meta: { title: "Create Drive" }
+        },
+        {
+            path: "/company/profile",
+            component: CompanyProfile,
+            meta: { title: "Company Profile" }
+        },
+        {
+            path: "/company/drive/:did/edit",
+            component: EditDrive,
+            meta: { title: "Edit Drive" }
         },
         {
             path: "/student",
