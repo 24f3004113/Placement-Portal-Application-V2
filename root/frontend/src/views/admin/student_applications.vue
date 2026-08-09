@@ -17,6 +17,7 @@
                 <th>Job Title</th>
                 <th>Application Date</th>
                 <th>Status</th>
+                <th>Action</th>
             </tr>
         </thead>
 
@@ -33,6 +34,9 @@
                 <td>{{ application.job_title }}</td>
                 <td>{{ application.application_date }}</td>
                 <td>{{ application.status }}</td>
+                <td>
+                    <button @click="$router.push('/admin/student/' + application.sid)">View Student</button>
+                </td>
 
             </tr>
 
@@ -87,8 +91,8 @@ export default {
                 this.student = data.student
                 this.email = data.email
                 this.phone = data.phone,
-                this.course = data.course,
-                this.cgpa = data.cgpa
+                    this.course = data.course,
+                    this.cgpa = data.cgpa
                 this.applications = data.applications
             } else {
                 this.message = data.message

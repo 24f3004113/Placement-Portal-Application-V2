@@ -17,6 +17,7 @@
                 <th>CGPA</th>
                 <th>Application Date</th>
                 <th>Status</th>
+                <th>Action</th>
             </tr>
         </thead>
 
@@ -36,6 +37,9 @@
                 <td>{{ application.cgpa }}</td>
                 <td>{{ application.application_date }}</td>
                 <td>{{ application.status }}</td>
+                <td>
+                    <button @click="$router.push('/admin/student/' + application.sid)">View Student</button>
+                </td>
 
             </tr>
 

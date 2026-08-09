@@ -1,55 +1,59 @@
 <template>
 
-<h2>All Applications</h2>
+    <h2>All Applications</h2>
 
-<input type="text" placeholder="Search" v-model="search" @input="getApplications">
-<button @click="clearSearch">Clear</button>
+    <input type="text" placeholder="Search" v-model="search" @input="getApplications">
+    <button @click="clearSearch">Clear</button>
 
-<br><br>
+    <br><br>
 
-<table border="1">
+    <table border="1">
 
-<thead>
-<tr>
-    <th>ID</th>
-    <th>Student</th>
-    <th>Email</th>
-    <th>Phone</th>
-    <th>Course</th>
-    <th>CGPA</th>
-    <th>Company</th>
-    <th>Job</th>
-    <th>Application Date</th>
-    <th>Status</th>
-</tr>
-</thead>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Student</th>
+                <th>Email</th>
+                <th>Phone</th>
+                <th>Course</th>
+                <th>CGPA</th>
+                <th>Company</th>
+                <th>Job</th>
+                <th>Application Date</th>
+                <th>Status</th>
+                <th>Action</th>
+            </tr>
+        </thead>
 
-<tbody>
+        <tbody>
 
-<tr v-if="applications.length == 0">
-    <td colspan="10">No applications found</td>
-</tr>
+            <tr v-if="applications.length == 0">
+                <td colspan="10">No applications found</td>
+            </tr>
 
-<tr v-for="application in applications" :key="application.aid">
+            <tr v-for="application in applications" :key="application.aid">
 
-    <td>{{ application.aid }}</td>
-    <td>{{ application.student }}</td>
-    <td>{{ application.email }}</td>
-    <td>{{ application.phone }}</td>
-    <td>{{ application.course }}</td>
-    <td>{{ application.cgpa }}</td>
-    <td>{{ application.company }}</td>
-    <td>{{ application.job_title }}</td>
-    <td>{{ application.application_date }}</td>
-    <td>{{ application.status }}</td>
+                <td>{{ application.aid }}</td>
+                <td>{{ application.student }}</td>
+                <td>{{ application.email }}</td>
+                <td>{{ application.phone }}</td>
+                <td>{{ application.course }}</td>
+                <td>{{ application.cgpa }}</td>
+                <td>{{ application.company }}</td>
+                <td>{{ application.job_title }}</td>
+                <td>{{ application.application_date }}</td>
+                <td>{{ application.status }}</td>
+                <td>
+                    <button @click="$router.push('/admin/student/' + application.sid)">View Student</button>
+                </td>
 
-</tr>
+            </tr>
 
-</tbody>
+        </tbody>
 
-</table>
+    </table>
 
-<p>{{ message }}</p>
+    <p>{{ message }}</p>
 
 </template>
 

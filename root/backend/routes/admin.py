@@ -69,6 +69,31 @@ def all_students():
         
     return jsonify(data), 200
 
+@admin.route("/admin/student/<int:sid>", methods=["GET"])
+@jwt_required()
+def student_profile(sid):
+    
+    role = get_jwt()["role"]
+    
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    student = Student.query.get(sid)
+    
+    if student is None:
+        return jsonify({"message":"Student Not Found"}),404
+    
+    return jsonify({
+        "sid": student.sid,
+        "name": student.name,
+        "email": student.user.email,
+        "phone": student.phone,
+        "course": student.course,
+        "cgpa": student.cgpa,
+        "graduation_year": student.graduation_year,
+        "skills": student.skills,
+        "resume": student.resume
+    }),200
 
 @admin.route("/admin/companies", methods=["GET"])
 @jwt_required()
@@ -295,6 +320,7 @@ def student_applications(sid):
     
     for application in applications:
         data.append({
+            "sid": application.student.sid,
             "aid": application.aid,
             "company": application.drive.company.company_name,
             "job_title": application.drive.job_title,
@@ -477,6 +503,7 @@ def drive_applications(did):
     
     for application in applications:
         data.append({
+            "sid": application.student.sid,
             "aid": application.aid,
             "student": application.student.name,
             "email": application.student.user.email,
@@ -525,6 +552,7 @@ def all_applications():
     
     for application in applications:
         data.append({
+            "sid": application.student.sid,
             "aid": application.aid,
             "student": application.student.name,
             "email": application.student.user.email,
