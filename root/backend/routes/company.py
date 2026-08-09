@@ -224,6 +224,28 @@ def edit_drive(did):
     
     return jsonify({"message": "Drive Updated Successfully"}), 200
 
+@company.route("/company/drive/<int:did>", methods=["DELETE"])
+@jwt_required()
+def delete_drive(did):
+
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+
+    if "uid" not in session or role != "company":
+        return jsonify({"message":"Unauthorized"}),401
+
+    company = Company.query.filter_by(user_id=uid).first()
+
+    drive = Drive.query.get(did)
+
+    if drive is None or drive.company_id != company.cid:
+        return jsonify({"message":"Drive Not Found"}),404
+
+    db.session.delete(drive)
+    db.session.commit()
+
+    return jsonify({"message":"Drive Deleted Successfully"}),200
+
 @company.route("/company/drive/<int:did>/applications", methods=["GET"])
 @jwt_required()
 def drive_applications(did):

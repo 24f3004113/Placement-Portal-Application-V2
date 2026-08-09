@@ -39,6 +39,7 @@
                 <td>{{ application.status }}</td>
                 <td>
                     <button @click="$router.push('/admin/student/' + application.sid)">View Student</button>
+                    <button @click="$router.push('/admin/application/' + application.aid + '/history')">History</button>
                 </td>
 
             </tr>

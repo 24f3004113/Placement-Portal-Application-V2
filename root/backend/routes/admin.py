@@ -382,6 +382,37 @@ def all_drives():
         
     return jsonify(data), 200
 
+@admin.route("/admin/drive/<int:did>", methods=["GET"])
+@jwt_required()
+def drive_details(did):
+
+    role = get_jwt()["role"]
+
+    if role != "admin":
+        return jsonify({"message":"Unauthorized"}),401
+
+    drive = Drive.query.get(did)
+
+    if drive is None:
+        return jsonify({"message":"Drive Not Found"}),404
+
+    application_count = Application.query.filter_by(drive_id=did).count()
+
+    return jsonify({
+        "did": drive.did,
+        "company": drive.company.company_name,
+        "job_title": drive.job_title,
+        "description": drive.description,
+        "course": drive.course,
+        "min_cgpa": drive.min_cgpa,
+        "graduation_year": drive.graduation_year,
+        "salary": drive.salary,
+        "deadline": drive.application_deadline.strftime("%d %b %Y"),
+        "approval_status": drive.approval_status,
+        "status": drive.status,
+        "application_count": application_count
+    }),200
+
 @admin.route("/admin/drive/<int:did>/approve", methods=["PUT"])
 @jwt_required()
 def approve_drive(did):
@@ -588,9 +619,21 @@ def application_history(aid):
     
     for h in history:
         data.append({
+            "hid": h.hid,
             "status": h.status,
             "feedback": h.feedback,
-            "updated_at": h.updated_at
+            "updated_at": h.updated_at.strftime("%d %b %Y")
         })
         
-    return jsonify(data),200
+    return jsonify({
+        "aid": application.aid,
+        "student": application.student.name,
+        "course": application.student.course,
+        "skills": application.student.skills,
+        "cgpa": application.student.cgpa,
+        "company": application.drive.company.company_name,
+        "job_title": application.drive.job_title,
+        "application_date": application.application_date.strftime("%d %b %Y"),
+        "status": application.status,
+        "history": data
+    }),200
