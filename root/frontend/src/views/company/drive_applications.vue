@@ -3,16 +3,18 @@
     <h2>Drive Applications</h2>
 
     <table v-if="drive">
+        <tbody>
+            <tr>
+                <td>Company:</td>
+                <td>{{ company }}</td>
+            </tr>
 
-        <tr>
-            <td>Company:</td>
-            <td>{{ company }}</td>
-        </tr>
+            <tr>
+                <td>Job Title:</td>
+                <td>{{ drive }}</td>
+            </tr>
+        </tbody>
 
-        <tr>
-            <td>Job Title:</td>
-            <td>{{ drive }}</td>
-        </tr>
 
     </table>
 
@@ -51,6 +53,12 @@
                 <td>{{ application.application_date }}</td>
                 <td>{{ application.status }}</td>
 
+
+                <td>
+                    <button @click="$router.push('/company/application/' + application.aid + '/student')">
+                        View Student
+                    </button>
+                </td>
                 <td>
                     <button @click="$router.push('/company/application/' + application.aid + '/update')">
                         Update

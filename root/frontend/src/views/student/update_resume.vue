@@ -17,19 +17,14 @@
     <p>{{ message }}</p>
 
 
-    <div v-if="currentResume" class="embed-responsive embed-responsive-4by3">
+    <div v-if="currentResume" class="text-center">
 
         <h3>Current Resume</h3>
 
-        <iframe class="embed-responsive-item" :src="'http://127.0.0.1:5000/static/resumes/' + currentResume" width="700"
-            height="500"></iframe>
+        <iframe :src="'http://127.0.0.1:5000/static/resumes/' + currentResume" width="700"
+            height="990"></iframe>
 
         <br>
-
-        <button type="button" @click="viewResume">
-            Open in New Tab
-        </button>
-
     </div>
 
 

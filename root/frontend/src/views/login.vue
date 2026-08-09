@@ -1,71 +1,77 @@
 <template>
 
 
-<h2>Placement Portal</h2>
+    <h2>Placement Portal</h2>
 
-<form @submit.prevent="login">
+    <form @submit.prevent="login">
 
-<label>Email</label>
-<input type="email" placeholder="Email" v-model="form.email" required>
+        <label>Email</label>
+        <input type="email" placeholder="Email" v-model="form.email" required>
 
-<br><br>
+        <br><br>
 
-<label>Password</label>
-<input type="password" placeholder="Password" v-model="form.password" required>
+        <label>Password</label>
+        <input type="password" placeholder="Password" v-model="form.password" required>
 
-<br><br>
+        <br><br>
 
-<button type="submit">Login</button>
+        <button type="submit">Login</button>
 
-</form>
+    </form>
 
-<br>
+    <br>
 
-<button @click="$router.push('/student/register')">Student Register</button>
-<button @click="$router.push('/company/register')">Company Register</button>
+    <button @click="$router.push('/student/register')">Student Register</button>
+    <button @click="$router.push('/company/register')">Company Register</button>
 
-<br><br>
+    <br><br>
 
-<p>{{ message }}</p>
+    <p>{{ message }}</p>
 
 </template>
 
 <script>
 
-export default{
+export default {
 
-    data(){
+    data() {
 
-        return{
-            form:{
-            email:"",
-            password:""
+        return {
+            form: {
+                email: "",
+                password: ""
             },
-            message:""
+            message: ""
 
         }
 
     },
 
-    methods:{
+    methods: {
 
-        async login(){
+        async login() {
 
-            let response=await fetch("http://127.0.0.1:5000/login",{
+            let response = await fetch("http://127.0.0.1:5000/login", {
 
-                method:"POST",
+                method: "POST",
 
-                headers:{
-                    "Content-Type":"application/json"
+                headers: {
+                    "Content-Type": "application/json"
                 },
 
-                credentials:"include",
+                credentials: "include",
 
-                body:JSON.stringify(this.form)
+                body: JSON.stringify(this.form)
 
             })
 
-            let data=await response.json()
+            let data = await response.json()
+
+            if (!response.ok) {
+                alert(data.message)
+                this.message = data.message || data.msg
+                return
+            }
 
             localStorage.setItem("token", data.data.access_token)
 
@@ -73,15 +79,16 @@ export default{
 
 
 
-            if(response.ok){
 
-                if(data.data.role=="admin")
+            if (response.ok) {
+
+                if (data.data.role == "admin")
                     this.$router.push("/admin")
 
-                else if(data.data.role=="company")
+                else if (data.data.role == "company")
                     this.$router.push("/company")
 
-                else if(data.data.role=="student")
+                else if (data.data.role == "student")
                     this.$router.push("/student")
 
             }

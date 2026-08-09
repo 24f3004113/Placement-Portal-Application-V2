@@ -13,7 +13,6 @@
                 <th>Status</th>
                 <th>Feedback</th>
                 <th>Drive</th>
-                <th>Interview</th>
                 <th>History</th>
             </tr>
 
@@ -31,13 +30,6 @@
                     </button>
                 </td>
 
-                <td>
-                    <button v-if="a.interview" @click="$router.push('/student/application/' + a.aid + '/interview')">
-                        View Interview
-                    </button>
-
-                    <span v-else>Not Scheduled</span>
-                </td>
 
                 <td>
                     <button @click="$router.push('/student/application/' + a.aid + '/history')">

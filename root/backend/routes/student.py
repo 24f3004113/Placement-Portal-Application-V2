@@ -201,7 +201,7 @@ def drive_details(did):
         "min_cgpa":drive.min_cgpa,
         "graduation_year":drive.graduation_year,
         "salary":drive.salary,
-        "deadline":drive.application_deadline
+        "deadline":drive.application_deadline.strftime("%d %b %Y")
     }),200
 
 @student.route("/student/drive/<int:did>/apply", methods=["POST"])
@@ -253,11 +253,14 @@ def applications():
     data=[]
     for application in Application.query.filter_by(student_id=student.sid).all():
         data.append({
+            "aid": application.aid,
+            "did": application.drive.did,
             "company":application.drive.company.company_name,
             "job_title":application.drive.job_title,
-            "application_date":application.application_date,
+            "application_date":application.application_date.strftime("%d %b %Y"),
             "status":application.status,
-            "feedback":application.feedback
+            "feedback":application.feedback,
+            "interview": application.interview is not None
         })
         
     return jsonify(data),200
@@ -286,7 +289,7 @@ def application_history(aid):
         data.append({
             "status": history.status,
             "feedback": history.feedback,
-            "updated_at": history.updated_at
+            "updated_at": history.updated_at.strftime("%d %b %Y")
         })
     return jsonify(data),200
 
@@ -317,7 +320,7 @@ def all_application_history():
                 "job_title": application.drive.job_title,
                 "status": history.status,
                 "feedback": history.feedback,
-                "updated_at": history.updated_at
+                "updated_at": history.updated_at.strftime("%d %b %Y")
             })
             
     return jsonify(data),200
@@ -338,10 +341,11 @@ def interviews():
     for application in Application.query.filter_by(student_id=student.sid).all():
         if application.interview:
             data.append({
+                "iid":application.interview.iid,
                 "company":application.drive.company.company_name,
                 "job_title":application.drive.job_title,
-                "date":application.interview.interview_date,
-                "time":application.interview.interview_time,
+                "date":application.interview.interview_date.strftime("%d %b %Y"),
+                "time":application.interview.interview_time.strftime("%H:%M"),
                 "mode":application.interview.interview_mode,
                 "link":application.interview.interview_link,
                 "location":application.interview.interview_location,
@@ -368,7 +372,7 @@ def placements():
             "company":placement.company.company_name,
             "position":placement.position,
             "salary":placement.salary,
-            "joining_date":placement.joining_date
+            "joining_date":placement.joining_date.strftime("%d %b %Y")
         })
 
     return jsonify(data),200

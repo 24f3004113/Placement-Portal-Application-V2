@@ -5,52 +5,52 @@
 
 
     <table border="1" v-if="application">
+        <tbody>
+            <tr>
+                <td>Student</td>
+                <td>{{ application.student }}</td>
+            </tr>
 
-        <tr>
-            <td>Student</td>
-            <td>{{ application.student }}</td>
-        </tr>
+            <tr>
+                <td>Email</td>
+                <td>{{ application.email }}</td>
+            </tr>
 
-        <tr>
-            <td>Email</td>
-            <td>{{ application.email }}</td>
-        </tr>
+            <tr>
+                <td>Phone</td>
+                <td>{{ application.phone }}</td>
+            </tr>
 
-        <tr>
-            <td>Phone</td>
-            <td>{{ application.phone }}</td>
-        </tr>
+            <tr>
+                <td>Course</td>
+                <td>{{ application.course }}</td>
+            </tr>
 
-        <tr>
-            <td>Course</td>
-            <td>{{ application.course }}</td>
-        </tr>
+            <tr>
+                <td>CGPA</td>
+                <td>{{ application.cgpa }}</td>
+            </tr>
 
-        <tr>
-            <td>CGPA</td>
-            <td>{{ application.cgpa }}</td>
-        </tr>
+            <tr>
+                <td>Job Title</td>
+                <td>{{ application.job_title }}</td>
+            </tr>
 
-        <tr>
-            <td>Job Title</td>
-            <td>{{ application.job_title }}</td>
-        </tr>
+            <tr>
+                <td>Application Date</td>
+                <td>{{ application.application_date }}</td>
+            </tr>
 
-        <tr>
-            <td>Application Date</td>
-            <td>{{ application.application_date }}</td>
-        </tr>
+            <tr>
+                <td>Current Status</td>
+                <td>{{ application.status }}</td>
+            </tr>
 
-        <tr>
-            <td>Current Status</td>
-            <td>{{ application.status }}</td>
-        </tr>
-
-        <tr>
-            <td>Feedback</td>
-            <td>{{ application.feedback }}</td>
-        </tr>
-
+            <tr>
+                <td>Feedback</td>
+                <td>{{ application.feedback }}</td>
+            </tr>
+        </tbody>
     </table>
 
 

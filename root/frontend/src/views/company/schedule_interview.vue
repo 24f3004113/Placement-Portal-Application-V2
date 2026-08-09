@@ -3,42 +3,42 @@
     <h2>Schedule Interview</h2>
 
     <table border="1" v-if="application">
+        <tbody>
+            <tr>
+                <td>Student</td>
+                <td>{{ application.student }}</td>
+            </tr>
 
-        <tr>
-            <td>Student</td>
-            <td>{{ application.student }}</td>
-        </tr>
+            <tr>
+                <td>Email</td>
+                <td>{{ application.email }}</td>
+            </tr>
 
-        <tr>
-            <td>Email</td>
-            <td>{{ application.email }}</td>
-        </tr>
+            <tr>
+                <td>Phone</td>
+                <td>{{ application.phone }}</td>
+            </tr>
 
-        <tr>
-            <td>Phone</td>
-            <td>{{ application.phone }}</td>
-        </tr>
+            <tr>
+                <td>Course</td>
+                <td>{{ application.course }}</td>
+            </tr>
 
-        <tr>
-            <td>Course</td>
-            <td>{{ application.course }}</td>
-        </tr>
+            <tr>
+                <td>CGPA</td>
+                <td>{{ application.cgpa }}</td>
+            </tr>
 
-        <tr>
-            <td>CGPA</td>
-            <td>{{ application.cgpa }}</td>
-        </tr>
+            <tr>
+                <td>Job Title</td>
+                <td>{{ application.job_title }}</td>
+            </tr>
 
-        <tr>
-            <td>Job Title</td>
-            <td>{{ application.job_title }}</td>
-        </tr>
-
-        <tr>
-            <td>Status</td>
-            <td>{{ application.status }}</td>
-        </tr>
-
+            <tr>
+                <td>Status</td>
+                <td>{{ application.status }}</td>
+            </tr>
+        </tbody>
     </table>
 
     <br>
