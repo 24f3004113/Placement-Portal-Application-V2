@@ -35,8 +35,3 @@ celery_app.conf.beat_schedule = {
     }
 
 }
-
-
-@celery_app.task
-def test():
-    return "Celery working"
