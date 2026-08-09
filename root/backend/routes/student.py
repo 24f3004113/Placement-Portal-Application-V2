@@ -120,6 +120,66 @@ def update_profile():
     
     return jsonify({"message":"Profile Updated Successfully"}),200
 
+@student.route("/student/resume", methods=["GET"])
+@jwt_required()
+def get_resume():
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "student":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    student = Student.query.filter_by(user_id=uid).first()
+    
+    if student is None:
+        return jsonify({"message":"Student Not Found"}),404
+    
+    if not student.resume:
+        return jsonify({"message":"Resume Not Found"}),404
+    
+    return jsonify({
+        "resume": student.resume
+    }),200
+
+@student.route("/student/resume/update", methods=["PUT"])
+@jwt_required()
+def update_resume():
+    
+    uid = int(get_jwt_identity())
+    role = get_jwt()["role"]
+    
+    if "uid" not in session or role != "student":
+        return jsonify({"message":"Unauthorized"}),401
+    
+    student = Student.query.filter_by(user_id=uid).first()
+    
+    if student is None:
+        return jsonify({"message":"Student Not Found"}),404
+    
+    resume = request.files.get("resume")
+    
+    if not resume:
+        return jsonify({"message":"Resume is required."}),400
+    
+    if not resume.filename.lower().endswith(".pdf"):
+        return jsonify({
+            "message":"Only PDF files are allowed."
+        }),400
+        
+    filename = str(student.sid) + ".pdf"
+    
+    resume.save("static/resumes/" + filename)
+    
+    student.resume = filename
+    
+    db.session.commit()
+    
+    return jsonify({
+        "message":"Resume Updated Successfully"
+    }),200
+    
+
 
 @student.route("/student/drive/<int:did>", methods=["GET"])
 @jwt_required()

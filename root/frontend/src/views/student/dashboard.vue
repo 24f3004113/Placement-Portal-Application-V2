@@ -4,6 +4,10 @@
 
     <p>Welcome {{ student }}</p>
 
+    <button @click="$router.push('/student/profile/update')">View/Update Profile</button>
+
+    <button @click="$router.push('/student/resume/update')">VIew/Update Resume</button>
+
     <table border="1">
         <thead>
             <tr>
