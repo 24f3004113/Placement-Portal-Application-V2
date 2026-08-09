@@ -4,9 +4,12 @@
 
     <p>Welcome {{ student }}</p>
 
-    <button @click="$router.push('/student/profile/update')">View/Update Profile</button>
-
-    <button @click="$router.push('/student/resume/update')">VIew/Update Resume</button>
+    <button @click="$router.push('/student/applications')"> My Applications</button>
+    <button @click="$router.push('/student/history')">Application History</button>
+    <button @click="$router.push('/student/interviews')">My Interviews</button>
+    <button @click="$router.push('/student/placements')">My Placement</button>
+    <button @click="$router.push('/student/profile/update')">View/Edit Profile</button>
+    <button @click="$router.push('/student/resume/update')">View/Update Resume</button>
 
     <table border="1">
         <thead>
