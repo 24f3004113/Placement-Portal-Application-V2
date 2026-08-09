@@ -3,6 +3,7 @@ from db import db, User, Student, Company, Drive, Application, Interview, Applic
 from sqlalchemy import or_
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from datetime import datetime
+from tasks import send_email
 
 company = Blueprint("company", __name__)
 
@@ -429,6 +430,23 @@ def update_application(aid):
     db.session.add(history)
     
     db.session.commit()
+    send_email.delay(
+        application.student.user.email,
+        "Application Status Updated",
+        f"""Hello {application.student.name},
+
+        Your application for the position "{application.drive.job_title}"
+        at {application.drive.company.company_name} has been updated.
+
+        Status: {application.status}
+
+        Feedback: {application.feedback or "No feedback provided"}
+
+        Please log in to the Placement Portal for more details.
+
+        Regards,
+        Placement Portal"""
+            )
     
     return jsonify({
         "message":"Application Updated Successfully"
@@ -509,6 +527,28 @@ def schedule_interview(aid):
     
     db.session.commit()
     
+    send_email.delay(
+    application.student.user.email,
+    "Interview Scheduled",
+    f"""Hello {application.student.name},
+
+        An interview has been scheduled for your application.
+
+        Company: {application.drive.company.company_name}
+        Position: {application.drive.job_title}
+        Date: {interview.interview_date.strftime("%d %b %Y")}
+        Time: {interview.interview_time}
+        Mode: {interview.interview_mode}
+        Link: {interview.interview_link or "N/A"}
+        Location: {interview.interview_location or "N/A"}
+        Remarks: {interview.remarks or "N/A"}
+
+        Please log in to the Placement Portal for more details.
+
+        Regards,
+        Placement Portal"""
+        )
+    
     return jsonify({"message":"Interview Scheduled Successfully"}),201
 
 @company.route("/company/application/<int:aid>/interview", methods=["GET"])
@@ -558,6 +598,8 @@ def update_interview(iid):
     
     interview = Interview.query.get(iid)
     
+    application = interview.application
+    
     if interview is None or interview.application.drive.company_id != company.cid:
         return jsonify({"message":"Interview Not Found"}),404
     
@@ -575,5 +617,27 @@ def update_interview(iid):
     interview.remarks = data.get("remarks", interview.remarks)
     
     db.session.commit()
+    
+    send_email.delay(
+    application.student.user.email,
+    "Interview Details Updated",
+    f"""Hello {application.student.name},
+
+        The interview details for your application have been updated.
+
+        Company: {application.drive.company.company_name}
+        Position: {application.drive.job_title}
+        Date: {interview.interview_date.strftime("%d %b %Y")}
+        Time: {interview.interview_time}
+        Mode: {interview.interview_mode}
+        Link: {interview.interview_link or "N/A"}
+        Location: {interview.interview_location or "N/A"}
+        Remarks: {interview.remarks or "N/A"}
+
+        Please log in to the Placement Portal for the updated interview details.
+
+        Regards,
+        Placement Portal"""
+        )
     
     return jsonify({"message":"Interview Updated Successfully"}),200

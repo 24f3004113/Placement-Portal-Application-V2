@@ -1,99 +1,91 @@
 <template>
 
-<h2>Company Registration</h2>
+    <h2>Company Registration</h2>
 
-<form @submit.prevent="register">
+    <form @submit.prevent="register">
 
-    <label>Email</label>
-    <input type="email" placeholder="Enter your Email" v-model="form.email" required>
-    <br><br>
+        <label>Email</label>
+        <input type="email" v-model="form.email" placeholder="Enter your Email" required>
+        <br><br>
 
-    <label>Password</label>
-    <input type="password" placeholder="Create your Password" v-model="form.password" required>
-    <br><br>
+        <label>Password</label>
+        <input type="password" v-model="form.password" placeholder="Create your Password" required>
+        <br><br>
 
-    <label>Company Name</label>
-    <input type="text" placeholder="Enter Company Name" v-model="form.company_name" required>
-    <br><br>
+        <label>Company Name</label>
+        <input type="text" v-model="form.company_name" placeholder="Enter Company Name" required>
+        <br><br>
 
-    <label>Industry</label>
-    <input type="text" placeholder="Enter Company's Industry" v-model="form.industry" required>
-    <br><br>
+        <label>Industry</label>
+        <input type="text" v-model="form.industry" placeholder="Enter Company's Industry" required>
+        <br><br>
 
-    <label>Location</label>
-    <input type="text" placeholder="Enter Company Location" v-model="form.location" required>
-    <br><br>
+        <label>Location</label>
+        <input type="text" v-model="form.location" placeholder="Enter Company Location" required>
+        <br><br>
 
-    <label>HR Contact</label>
-    <input type="text" placeholder="Enter HR Contact" v-model="form.hr_contact" required>
-    <br><br>
+        <label>HR Contact</label>
+        <input type="text" v-model="form.hr_contact" placeholder="Enter HR Contact" required>
+        <br><br>
 
-    <label>Website</label>
-    <input type="text" placeholder="Enter Company's Website" v-model="form.website">
-    <br><br>
+        <label>Website</label>
+        <input type="text" v-model="form.website" placeholder="Enter Company's Website">
+        <br><br>
 
-    <button type="submit">Register</button>
+        <button type="submit">Register</button>
 
-</form>
+    </form>
 
-<br>
-
-<p>{{ message }}</p>
+    <p>{{ message }}</p>
 
 </template>
 
 <script>
 
-export default{
+export default {
 
-    data(){
-
-        return{
-            form:{
-                email:"",
-                password:"",
-                company_name:"",
-                industry:"",
-                location:"",
-                hr_contact:"",
-                website:""
+    data() {
+        return {
+            form: {
+                email: "",
+                password: "",
+                company_name: "",
+                industry: "",
+                location: "",
+                hr_contact: "",
+                website: ""
             },
-            message:""
 
+            message: ""
         }
-
     },
 
-    methods:{
+    methods: {
 
-        async register(){
+        async register() {
 
-            let response=await fetch("http://127.0.0.1:5000/company/register",{
+            let response = await fetch(
+                "http://127.0.0.1:5000/company/register",
+                {
+                    method: "POST",
 
-                method:"POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
 
-                headers:{
-                    "Content-Type":"application/json"
-                },
+                    body: JSON.stringify(this.form)
+                }
+            )
 
-                body:JSON.stringify({
+            let data = await response.json()
 
-                    email:this.email,
-                    password:this.password,
-                    company_name:this.company_name,
-                    industry:this.industry,
-                    location:this.location,
-                    hr_contact:this.hr_contact,
-                    website:this.website
+            this.message = data.message
 
-                })
+            alert(data.message)
 
-            })
-
-            let data=await response.json()
-
-            this.message=data.message
-
+            if (response.ok) {
+                this.$router.push("/")
+            }
         }
 
     }

@@ -1,8 +1,9 @@
-from flask import Blueprint, jsonify, request, session
+from flask import Blueprint, jsonify, request, session, send_file
 from sqlalchemy import or_
 from datetime import date
 from db import db, Student, Company, Drive, Application, Interview, Placement, ApplicationHistory
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+import os
 
 
 student = Blueprint("student", __name__)
@@ -230,9 +231,18 @@ def apply(did):
     if Application.query.filter_by(student_id=student.sid,drive_id=did).first():
         return jsonify({"message":"Already Applied"}),400
     
-    application = Application(student_id=student.sid,drive_id=did)
-    
+    application = Application(student_id=student.sid,drive_id=did,status="Applied")
+
     db.session.add(application)
+    db.session.commit()
+
+    history = ApplicationHistory(
+        application_id=application.aid,
+        status=application.status,
+        feedback=application.feedback
+    )
+    
+    db.session.add(history)
     db.session.commit()
     
     return jsonify({"message":"Applied Successfully"}),201
@@ -377,3 +387,43 @@ def placements():
 
     return jsonify(data),200
 
+@student.route("/student/export/applications")
+@jwt_required()
+def export_applications():
+    
+    from tasks import export_student_applications
+    
+    uid = int(get_jwt_identity())
+    
+    student = Student.query.filter_by(user_id=uid).first()
+    
+    if not student:
+        return jsonify({"message": "Student Not Found"}), 404
+    
+    export_student_applications.delay(student.sid)
+    
+    return jsonify({
+        "message": "CSV generation started"
+    }), 202
+    
+@student.route("/student/export/applications/download")
+@jwt_required()
+def download_applications():
+    
+    uid = int(get_jwt_identity())
+    
+    student = Student.query.filter_by(user_id=uid).first()
+    
+    if not student:
+        return jsonify({"message": "Student Not Found"}), 404
+    
+    filename = f"exports/student_{student.sid}.csv"
+    
+    if not os.path.exists(filename):
+        return jsonify({"message": "CSV not ready"}), 404
+    
+    return send_file(
+        filename,
+        as_attachment=True,
+        download_name="applications.csv"
+    )

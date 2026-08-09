@@ -2,6 +2,16 @@
 
     <h2>My Applications</h2>
 
+    <button @click="exportApplications">
+        Export Applications
+    </button>
+
+    <button @click="downloadApplications">
+        Download CSV
+    </button>
+
+    <p>{{ message }}</p>
+
     <table border="1">
 
         <tbody>
@@ -43,7 +53,6 @@
 
     </table>
 
-    <p>{{ message }}</p>
 
 </template>
 
@@ -57,6 +66,60 @@ export default {
             message: ""
         }
     },
+    methods: {
+
+        async exportApplications() {
+
+            let response = await fetch(
+                "http://localhost:5000/student/export/applications",
+                {
+                    headers: {
+                        Authorization:
+                            "Bearer " + localStorage.getItem("token")
+                    }
+                }
+            )
+
+            let data = await response.json()
+
+            this.message = data.message
+        },
+
+        async downloadApplications() {
+
+            let response = await fetch(
+                "http://localhost:5000/student/export/applications/download",
+                {
+                    headers: {
+                        Authorization:
+                            "Bearer " + localStorage.getItem("token")
+                    }
+                }
+            )
+
+            if (!response.ok) {
+
+                this.message = "CSV is not ready yet"
+
+                return
+            }
+
+            let blob = await response.blob()
+
+            let url = window.URL.createObjectURL(blob)
+
+            let link = document.createElement("a")
+
+            link.href = url
+            link.download = "applications.csv"
+
+            link.click()
+
+            window.URL.revokeObjectURL(url)
+        }
+
+    },
+
 
     async mounted() {
 
@@ -85,7 +148,8 @@ export default {
         else
             this.message = data.message || data.msg
     }
-
 }
+
+
 
 </script>

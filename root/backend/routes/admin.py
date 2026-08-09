@@ -2,6 +2,7 @@ from flask import Blueprint, jsonify, session, request
 from sqlalchemy import or_
 from db import db, User, Company, Student, Drive, Application ,ApplicationHistory
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from tasks import send_email
 
 admin = Blueprint("admin", __name__)
 
@@ -190,6 +191,20 @@ def approve_company(cid):
     company.approval_status = "Approved"
     
     db.session.commit()
+    
+    send_email.delay(
+        company.user.email,
+        "Company Registration Approved",
+        f"""Hello {company.company_name},
+
+            Your company registration has been approved.
+
+            You can now log in to the Placement Portal and access your company account.
+
+            Regards,
+            Placement Portal"""
+                )
+
     
     return jsonify({"message": "Company Approved Successfully"}), 200
 
@@ -430,6 +445,40 @@ def approve_drive(did):
     
     drive.approval_status = "Approved"
     db.session.commit()
+    
+    send_email.delay(
+        drive.company.user.email,
+        "Placement Drive Approved",
+        f"""Hello {drive.company.company_name},
+
+            Your placement drive for the position "{drive.job_title}" has been approved by the administrator.
+
+            You can now view and manage the drive from your company dashboard.
+
+            Regards,
+            Placement Portal"""
+                )
+    for student in Student.query.all():
+
+        send_email.delay(
+            student.user.email,
+            "New Placement Drive Available",
+            f"""Hello {student.name},
+
+            A new placement drive has been approved.
+
+            Company: {drive.company.company_name}
+            Position: {drive.job_title}
+            Course: {drive.course}
+            Minimum CGPA: {drive.min_cgpa}
+            Salary: {drive.salary}
+            Application Deadline: {drive.application_deadline}
+
+            Please log in to the Placement Portal to view the drive and apply.
+
+            Regards,
+            Placement Portal"""
+                    )
     
     return jsonify({"message":"Drive Approved Successfully"}),200
 
