@@ -1,6 +1,6 @@
 <template>
 
-    <h2>Student Profile</h2>
+    <h2 class="text-center">Student Profile</h2>
     <div class="container">
         <div class="row justify-content-center">
             <div class="col-md-6">
@@ -48,22 +48,28 @@
                 </table>
             </div>
         </div>
-        </div>
+    </div>
 
-        <div v-if="student && student.resume" class="text-center">
+    <div v-if="student && student.resume" class="text-center">
 
-            <h3>Resume</h3>
+        <h3>Resume</h3>
 
-            <iframe :src="'http://localhost:5000/static/resumes/' + student.resume" width="700" height="990">
-            </iframe>
+        <iframe :src="'http://localhost:5000/static/resumes/' + student.resume" width="700" height="990">
+        </iframe>
 
-        </div>
+    </div>
 
-        <p v-else-if="student">Resume not uploaded</p>
+    <p v-else-if="student">Resume not uploaded</p>
 
-        <p>{{ message }}</p>
+    <p>{{ message }}</p>
 
-        <button @click="$router.back()">Back</button>
+    <div class="text-center mt-3">
+        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin')">
+            Dashboard
+        </button>
+        <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
+        <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+    </div>
 
 </template>
 
@@ -94,7 +100,7 @@ export default {
 
         let data = await response.json()
 
-        if ( data.msg == "Token has expired") {
+        if (data.msg == "Token has expired") {
 
             alert("Session expired. Please login again.")
             localStorage.removeItem("token")

@@ -1,10 +1,12 @@
 <template>
+    <div class="text-center">
+        <h2>Students</h2>
 
-    <h2>Students</h2>
+        <br>
 
-    <input type="text" placeholder="Search" v-model="search" @input="getStudents">
-    <button @click="clearSearch">Clear</button>
-
+        <input type="text" placeholder="Search" v-model="search" @input="getStudents">
+        <button @click="clearSearch">Clear</button>
+    </div>
     <br><br>
 
     <div class="container my-5 shadow p-2 ">
@@ -44,14 +46,24 @@
                         <td>{{ student.blacklisted ? "Blocked" : "Not Blocked" }}</td>
 
                         <td>
+                            <button class="bg-primary btn shadow text-white me-2"
+                                @click="$router.push('/admin/student/' + student.sid)">
+                                View Student
+                            </button>
 
+                            <button class="bg-info btn shadow text-white me-2"
+                                @click="$router.push('/admin/student/' + student.sid + '/applications')">
+                                View Applications
+                            </button>
 
-                            <button @click="$router.push('/admin/student/' + student.sid)">View Student</button>
+                            <button v-if="!student.blacklisted" class="bg-danger btn shadow text-white me-2"
+                                @click="blacklist(student.sid)">
+                                Block
+                            </button>
 
-                            <button @click="$router.push('/admin/student/' + student.sid + '/applications')">View
-                                Applications</button>
-                            <button v-if="!student.blacklisted" @click="blacklist(student.sid)">Block</button>
-                            <button v-else @click="unblacklist(student.sid)">Unblock</button>
+                            <button v-else class="bg-success btn shadow text-white" @click="unblacklist(student.sid)">
+                                Unblock
+                            </button>
                         </td>
                     </tr>
 
@@ -59,6 +71,14 @@
 
             </table>
         </div>
+    </div>
+
+    <div class="text-center mt-3">
+        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin')">
+            Dashboard
+        </button>
+        <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
+        <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
     </div>
 
 </template>
@@ -89,7 +109,7 @@ export default {
 
             this.students = await response.json()
 
-            if ( data.msg == "Token has expired") {
+            if (data.msg == "Token has expired") {
                 alert("Session expired. Please login again.")
                 localStorage.removeItem("token")
                 this.$router.push("/")

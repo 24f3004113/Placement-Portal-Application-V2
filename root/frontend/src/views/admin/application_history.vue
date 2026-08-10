@@ -2,7 +2,7 @@
 
 
 
-    <h2>Application History</h2>
+    <h2 class="text-center">Application History</h2>
 
 
 
@@ -67,7 +67,7 @@
 
         <br>
 
-        <h3>Status History</h3>
+        <h3 class="text-center">Status History</h3>
 
         <div class="container my-5 shadow p-2 ">
             <div class="table-responsive-md">
@@ -96,9 +96,16 @@
 
     </div>
 
-    <p>{{ message }}</p>
 
-    <button @click="$router.back()">Back</button>
+
+    <div class="text-center mt-3">
+        <p>{{ message }}</p>
+        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin')">
+            Dashboard
+        </button>
+        <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
+        <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+    </div>
 
 </template>
 
@@ -130,7 +137,7 @@ export default {
 
         let data = await response.json()
 
-        if ( data.msg == "Token has expired") {
+        if (data.msg == "Token has expired") {
             alert("Session expired. Please login again.")
             localStorage.removeItem("token")
             this.$router.push("/")

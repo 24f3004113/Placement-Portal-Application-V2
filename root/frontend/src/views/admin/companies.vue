@@ -1,23 +1,27 @@
 <template>
+    <div class="text-center">
+        <h2>Companies</h2>
 
-    <h2>Companies</h2>
+        <br>
 
-    <input type="text" placeholder="Search" v-model="search" @input="getCompanies">
 
-    <select v-model="approvalFilter" @change="getCompanies">
-        <option value="">All Approval Status</option>
-        <option value="Pending">Pending</option>
-        <option value="Approved">Approved</option>
-        <option value="Rejected">Rejected</option>
-    </select>
+        <input type="text" placeholder="Search" v-model="search" @input="getCompanies">
 
-    <select v-model="blockedFilter" @change="getCompanies">
-        <option value="">All</option>
-        <option value="true">Blocked</option>
-        <option value="false">Not Blocked</option>
-    </select>
+        <select v-model="approvalFilter" @change="getCompanies">
+            <option value="">All Approval Status</option>
+            <option value="Pending">Pending</option>
+            <option value="Approved">Approved</option>
+            <option value="Rejected">Rejected</option>
+        </select>
 
-    <button @click="clearFilters">Clear</button>
+        <select v-model="blockedFilter" @change="getCompanies">
+            <option value="">All</option>
+            <option value="true">Blocked</option>
+            <option value="false">Not Blocked</option>
+        </select>
+
+        <button @click="clearFilters">Clear</button>
+    </div>
 
     <div class="container my-5 shadow p-2 ">
         <div class="table-responsive-md">
@@ -57,20 +61,31 @@
                         <td>{{ company.blacklisted ? "Blocked" : "Not Blocked" }}</td>
 
                         <td>
-                            <button @click="$router.push('/admin/company/' + company.cid + '/drives')">View
-                                Drives</button>
+                            <button class="bg-primary btn shadow text-white me-2"
+                                @click="$router.push('/admin/company/' + company.cid + '/drives')">
+                                View Drives
+                            </button>
 
                             <button v-if="company.approval_status == 'Pending'"
-                                @click="approve(company.cid)">Approve</button>
+                                class="bg-success btn shadow text-white me-2" @click="approve(company.cid)">
+                                Approve
+                            </button>
 
-                            <button v-if="company.approval_status == 'Pending'"
-                                @click="reject(company.cid)">Reject</button>
+                            <button v-if="company.approval_status == 'Pending'" class="bg-danger btn shadow text-white"
+                                @click="reject(company.cid)">
+                                Reject
+                            </button>
                         </td>
 
                         <td>
-                            <button v-if="!company.blacklisted" @click="blacklist(company.cid)">Blacklist</button>
+                            <button v-if="!company.blacklisted" class="bg-danger btn shadow text-white"
+                                @click="blacklist(company.cid)">
+                                Blacklist
+                            </button>
 
-                            <button v-else @click="unblacklist(company.cid)">Unblacklist</button>
+                            <button v-else class="bg-success btn shadow text-white" @click="unblacklist(company.cid)">
+                                Unblacklist
+                            </button>
                         </td>
 
                     </tr>
@@ -81,7 +96,13 @@
         </div>
     </div>
 
-    <button @click="$router.back()">Back</button>
+    <div class="text-center mt-3">
+        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin')">
+            Dashboard
+        </button>
+        <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
+        <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+    </div>
 
 </template>
 

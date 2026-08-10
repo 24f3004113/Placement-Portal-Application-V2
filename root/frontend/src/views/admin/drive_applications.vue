@@ -1,9 +1,9 @@
 <template>
 
-    <h2>Drive Applications</h2>
+    <h1 class="text-center">Drive Applications</h1>
 
-    <p><b>Company:</b> {{ company }}</p>
-    <p><b>Job Title:</b> {{ drive }}</p>
+    <h2 class="text-center">Company: {{ company }}</h2>
+    <h2 class="text-center">Job Title: {{ drive }}</h2>
 
     <div class="container my-5 shadow p-2 ">
         <div class="table-responsive-md">
@@ -40,9 +40,15 @@
                         <td>{{ application.application_date }}</td>
                         <td>{{ application.status }}</td>
                         <td>
-                            <button @click="$router.push('/admin/student/' + application.sid)">View Student</button>
-                            <button
-                                @click="$router.push('/admin/application/' + application.aid + '/history')">History</button>
+                            <button class="bg-primary btn shadow text-white me-2"
+                                @click="$router.push('/admin/student/' + application.sid)">
+                                View Student
+                            </button>
+
+                            <button class="bg-secondary btn shadow text-white"
+                                @click="$router.push('/admin/application/' + application.aid + '/history')">
+                                History
+                            </button>
                         </td>
 
                     </tr>
@@ -55,9 +61,15 @@
 
     <br>
 
-    <button @click="$router.back()">Back</button>
+    <div class="text-center mt-3">
+        <p>{{ message }}</p>
+        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin')">
+            Dashboard
+        </button>
+        <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
+        <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+    </div>
 
-    <p>{{ message }}</p>
 
 </template>
 
@@ -93,7 +105,7 @@ export default {
 
             let data = await response.json()
 
-            if ( data.msg == "Token has expired") {
+            if (data.msg == "Token has expired") {
                 alert("Session expired. Please login again.")
                 localStorage.removeItem("token")
                 this.$router.push("/")

@@ -1,11 +1,12 @@
 <template>
+    <div class="text-center">
+        <h2>Placement Drives</h2>
+        <br>
+        <input type="text" placeholder="Search" v-model="search" @input="getDrives">
+        <button @click="clearSearch">Clear</button>
+    </div>
 
-    <h2>Placement Drives</h2>
-
-    <input type="text" placeholder="Search" v-model="search" @input="getDrives">
-    <button @click="clearSearch">Clear</button>
-
-    <br><br>
+    <br>
 
     <div class="container my-5 shadow p-2 ">
         <div class="table-responsive-md">
@@ -48,12 +49,25 @@
                         <td>{{ drive.applications }}</td>
 
                         <td>
-                            <button @click="$router.push('/admin/drive/' + drive.did)">View Details</button>
-                            <button @click="$router.push('/admin/drive/' + drive.did + '/applications')"> View
-                                Applications</button>
+                            <button class="bg-primary btn shadow text-white me-2"
+                                @click="$router.push('/admin/drive/' + drive.did)">
+                                View Details
+                            </button>
+
+                            <button class="bg-info btn shadow me-2"
+                                @click="$router.push('/admin/drive/' + drive.did + '/applications')">
+                                View Applications
+                            </button>
+
                             <button v-if="drive.approval_status == 'Pending'"
-                                @click="approve(drive.did)">Approve</button>
-                            <button v-if="drive.approval_status == 'Pending'" @click="reject(drive.did)">Reject</button>
+                                class="bg-success btn shadow text-white me-2" @click="approve(drive.did)">
+                                Approve
+                            </button>
+
+                            <button v-if="drive.approval_status == 'Pending'" class="bg-danger btn shadow text-white"
+                                @click="reject(drive.did)">
+                                Reject
+                            </button>
                         </td>
 
                     </tr>
@@ -65,6 +79,13 @@
     </div>
 
     <p>{{ message }}</p>
+    <div class="text-center mt-3">
+        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin')">
+            Dashboard
+        </button>
+        <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
+        <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+    </div>
 
 </template>
 
@@ -97,7 +118,7 @@ export default {
 
             let data = await response.json()
 
-            if ( data.msg == "Token has expired") {
+            if (data.msg == "Token has expired") {
                 alert("Session expired. Please login again.")
                 localStorage.removeItem("token")
                 this.$router.push("/")

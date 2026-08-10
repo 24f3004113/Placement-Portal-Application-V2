@@ -1,64 +1,81 @@
 <template>
+    <div class="text-center">
+        <h2 class="text-center">All Applications</h2>
+        <br>
 
-    <h2>All Applications</h2>
-
-    <input type="text" placeholder="Search" v-model="search" @input="getApplications">
-    <button @click="clearSearch">Clear</button>
-
+        <input type="text" placeholder="Search" v-model="search" @input="getApplications">
+        <button @click="clearSearch">Clear</button>
+    </div>
     <br><br>
 
-     <div class="container my-5 shadow p-2 ">
+    <div class="container my-5 shadow p-2 ">
         <div class="table-responsive-md">
             <table class="table table-striped  table-bordered table-hover ">
 
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Student</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Course</th>
-                <th>CGPA</th>
-                <th>Company</th>
-                <th>Job</th>
-                <th>Application Date</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Course</th>
+                        <th>CGPA</th>
+                        <th>Company</th>
+                        <th>Job</th>
+                        <th>Application Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
 
-        <tbody>
+                <tbody>
 
-            <tr v-if="applications.length == 0">
-                <td colspan="10">No applications found</td>
-            </tr>
+                    <tr v-if="applications.length == 0">
+                        <td colspan="10">No applications found</td>
+                    </tr>
 
-            <tr v-for="application in applications" :key="application.aid">
+                    <tr v-for="application in applications" :key="application.aid">
 
-                <td>{{ application.aid }}</td>
-                <td>{{ application.student }}</td>
-                <td>{{ application.email }}</td>
-                <td>{{ application.phone }}</td>
-                <td>{{ application.course }}</td>
-                <td>{{ application.cgpa }}</td>
-                <td>{{ application.company }}</td>
-                <td>{{ application.job_title }}</td>
-                <td>{{ application.application_date }}</td>
-                <td>{{ application.status }}</td>
-                <td>
-                    <button @click="$router.push('/admin/student/' + application.sid)">View Student</button>
-                    <button @click="$router.push('/admin/application/' + application.aid + '/history')">History</button>
-                </td>
+                        <td>{{ application.aid }}</td>
+                        <td>{{ application.student }}</td>
+                        <td>{{ application.email }}</td>
+                        <td>{{ application.phone }}</td>
+                        <td>{{ application.course }}</td>
+                        <td>{{ application.cgpa }}</td>
+                        <td>{{ application.company }}</td>
+                        <td>{{ application.job_title }}</td>
+                        <td>{{ application.application_date }}</td>
+                        <td>{{ application.status }}</td>
+                        <td>
+                            <button class="bg-primary btn shadow text-white me-2"
+                                @click="$router.push('/admin/student/' + application.sid)">
+                                View Student
+                            </button>
 
-            </tr>
+                            <button class="bg-secondary btn shadow text-white"
+                                @click="$router.push('/admin/application/' + application.aid + '/history')">
+                                History
+                            </button>
+                        </td>
 
-        </tbody>
+                    </tr>
 
-                </table>
-            </div>
+                </tbody>
+
+            </table>
         </div>
+    </div>
 
-    <p>{{ message }}</p>
+
+
+    <div class="text-center mt-3">
+        <p>{{ message }}</p>
+        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin')">
+            Dashboard
+        </button>
+        <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
+        <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+    </div>
 
 </template>
 
@@ -92,7 +109,7 @@ export default {
 
             let data = await response.json()
 
-            if ( data.msg == "Token has expired") {
+            if (data.msg == "Token has expired") {
                 alert("Session expired. Please login again.")
                 localStorage.removeItem("token")
                 this.$router.push("/")

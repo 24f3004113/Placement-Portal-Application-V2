@@ -1,11 +1,14 @@
 <template>
+    <div class="text-center">
+        <h2>Company Drives</h2>
+        <br>
 
-    <h2>Company Drives</h2>
+        <p><b>Company:</b> {{ company }}</p>
+        <br>
 
-    <p><b>Company:</b> {{ company }}</p>
-
-    <input type="text" placeholder="Search" v-model="search" @input="getDrives">
-    <button @click="clearSearch">Clear</button>
+        <input type="text" placeholder="Search" v-model="search" @input="getDrives">
+        <button @click="clearSearch">Clear</button>
+    </div>
 
     <br><br>
 
@@ -45,11 +48,13 @@
                         <td>{{ drive.status }}</td>
 
                         <td>
-                            <button @click="$router.push('/admin/drive/' + drive.did)">
+                            <button class="bg-primary btn shadow text-white me-2"
+                                @click="$router.push('/admin/drive/' + drive.did)">
                                 View Details
                             </button>
 
-                            <button @click="$router.push('/admin/drive/' + drive.did + '/applications')">
+                            <button class="bg-info btn shadow"
+                                @click="$router.push('/admin/drive/' + drive.did + '/applications')">
                                 Applications
                             </button>
                         </td>
@@ -64,9 +69,16 @@
 
     <br>
 
-    <button @click="$router.back()">Back</button>
+    <div class="text-center mt-3">
+        <p>{{ message }}</p>
+        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin')">
+            Dashboard
+        </button>
+        <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
+        <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+    </div>
 
-    <p>{{ message }}</p>
+
 
 </template>
 
@@ -103,7 +115,7 @@ export default {
 
             let data = await response.json()
 
-            if ( data.msg == "Token has expired") {
+            if (data.msg == "Token has expired") {
                 alert("Session expired. Please login again.")
                 localStorage.removeItem("token")
                 this.$router.push("/")
