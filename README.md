@@ -89,7 +89,7 @@ Open another terminal:
 ``` bash
 cd backend
 source venv/bin/activate
-celery -A app.celery worker --loglevel=info
+py -m celery -A celery_worker.celery_app worker --loglevel=info
 ```
 
 Keep the Celery worker running.
@@ -97,7 +97,7 @@ Keep the Celery worker running.
 > On Windows, if the normal worker has multiprocessing issues, use:
 
 ``` bash
-celery -A app.celery worker --loglevel=info --pool=solo
+py -m celery -A celery_worker.celery_app worker --loglevel=info --pool=solo
 ```
 
 ## 6. Start Celery Beat
@@ -107,7 +107,7 @@ Open another terminal:
 ``` bash
 cd backend
 source venv/bin/activate
-celery -A app.celery beat --loglevel=info
+py -m celery -A celery_worker.celery_app beat --loglevel=info
 ```
 
 Keep Celery Beat running.
@@ -161,7 +161,7 @@ python app.py
 ``` bash
 cd backend
 source venv/bin/activate
-celery -A app.celery worker --loglevel=info
+py -m celery -A celery_worker.celery_app worker --loglevel=info --pool=solo
 ```
 
 ### Terminal 4 -- Celery Beat
@@ -169,7 +169,7 @@ celery -A app.celery worker --loglevel=info
 ``` bash
 cd backend
 source venv/bin/activate
-celery -A app.celery beat --loglevel=info
+py -m celery -A celery_worker.celery_app beat --loglevel=info
 ```
 
 ### Terminal 5 -- Vue
