@@ -4,7 +4,8 @@ from datetime import date
 from db import db, Student, Company, Drive, Application, Interview, Placement, ApplicationHistory
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 import os
-
+from flask_caching import Cache
+from cache import cache
 
 student = Blueprint("student", __name__)
 
@@ -15,7 +16,8 @@ def dashboard():
     uid = int(get_jwt_identity())
     role = get_jwt()["role"]
     
-    if "uid" not in session or role != "student":
+    
+    if role != "student":
         return jsonify({"message":"Unauthorized"}),401
     
     student = Student.query.filter_by(user_id=uid).first()
@@ -282,11 +284,14 @@ def application_history(aid):
     uid = int(get_jwt_identity())
     role = get_jwt()["role"]
     
+    
     if "uid" not in session or role != "student":
         return jsonify({"message":"Unauthorized"}),401
     
     student = Student.query.filter_by(user_id=uid).first()
-    application = Application.query.filter_by(aid=aid, student_id=student.sid).first()
+    
+    application = Application.query.filter_by(aid=aid,student_id=student.sid).first()
+    
     
     if application is None:
         return jsonify({"message":"Application Not Found"}),404
@@ -295,13 +300,26 @@ def application_history(aid):
     
     data = []
     
-    for history in history:
+    for h in history:
         data.append({
-            "status": history.status,
-            "feedback": history.feedback,
-            "updated_at": history.updated_at.strftime("%d %b %Y")
+            "hid": h.hid,
+            "status": h.status,
+            "feedback": h.feedback,
+            "updated_at": h.updated_at.strftime("%d %b %Y")
         })
-    return jsonify(data),200
+        
+    return jsonify({
+        "aid": application.aid,
+        "student": application.student.name,
+        "course": application.student.course,
+        "skills": application.student.skills,
+        "cgpa": application.student.cgpa,
+        "company": application.drive.company.company_name,
+        "job_title": application.drive.job_title,
+        "application_date": application.application_date.strftime("%d %b %Y"),
+        "status": application.status,
+        "history": data
+    }),200
 
 @student.route("/student/history", methods=["GET"])
 @jwt_required()
@@ -328,6 +346,7 @@ def all_application_history():
                 "application_id": application.aid,
                 "company": application.drive.company.company_name,
                 "job_title": application.drive.job_title,
+                "id": history.hid,
                 "status": history.status,
                 "feedback": history.feedback,
                 "updated_at": history.updated_at.strftime("%d %b %Y")
@@ -379,6 +398,7 @@ def placements():
     data=[]
     for placement in Placement.query.filter_by(student_id=student.sid).all():
         data.append({
+            "id":placement.pid,
             "company":placement.company.company_name,
             "position":placement.position,
             "salary":placement.salary,

@@ -228,23 +228,30 @@ def edit_drive(did):
 @company.route("/company/drive/<int:did>", methods=["DELETE"])
 @jwt_required()
 def delete_drive(did):
-
+    
     uid = int(get_jwt_identity())
     role = get_jwt()["role"]
-
-    if "uid" not in session or role != "company":
-        return jsonify({"message":"Unauthorized"}),401
-
+    
+    if role != "company":
+        return jsonify({"message": "Unauthorized"}), 401
+    
     company = Company.query.filter_by(user_id=uid).first()
-
+    
     drive = Drive.query.get(did)
-
+    
+    applications = Application.query.filter_by(drive_id=did).first()
+    
+    if applications:
+        return jsonify({
+            "message": "Applications exist. Cannot delete this drive."
+        }), 400
+    
     if drive is None or drive.company_id != company.cid:
         return jsonify({"message":"Drive Not Found"}),404
-
+    
     db.session.delete(drive)
     db.session.commit()
-
+    
     return jsonify({"message":"Drive Deleted Successfully"}),200
 
 @company.route("/company/drive/<int:did>/applications", methods=["GET"])
@@ -288,7 +295,7 @@ def drive_applications(did):
         data.append({
             "aid": application.aid,
             "student_id": application.student.sid,
-            "student_name": application.student.name,
+            "student": application.student.name,
             "email": application.student.user.email,
             "phone": application.student.phone,
             "course": application.student.course,
