@@ -1,16 +1,28 @@
-from flask import Flask, Blueprint
+from flask import Flask, Blueprint ,jsonify
 from db import db, User, Company, Student, Drive, Application
 from flask_jwt_extended import JWTManager
 from flask_cors import CORS
+from cache import cache
+
 
 app = Flask(__name__)
 
-CORS(app, supports_credentials=True)
+CORS(
+    app,
+    origins=["http://localhost:5173"],
+    supports_credentials=True
+)
 
 app.config["SQLALCHEMY_DATABASE_URI"] = "sqlite:///placement.db"
 app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
 app.secret_key = "lokaproject"
 app.config["JWT_SECRET_KEY"] = "loka_jwt_secret_key_extended_for_no_warning"
+
+app.config["CACHE_TYPE"] = "RedisCache"
+app.config["CACHE_REDIS_URL"] = "redis://localhost:6379/0"
+app.config["CACHE_DEFAULT_TIMEOUT"] = 300
+
+cache.init_app(app)
 
 jwt = JWTManager(app)
 
