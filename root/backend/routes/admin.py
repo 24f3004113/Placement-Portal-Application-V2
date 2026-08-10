@@ -3,12 +3,14 @@ from sqlalchemy import or_
 from db import db, User, Company, Student, Drive, Application ,ApplicationHistory
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from tasks import send_email
+from cache import cache
 
 admin = Blueprint("admin", __name__)
 
 
 @admin.route("/admin/dashboard", methods=["GET"])
 @jwt_required()
+@cache.cached(timeout=30)
 def admin_dashboard():
     
     uid = int(get_jwt_identity())
@@ -70,6 +72,7 @@ def all_students():
         
     return jsonify(data), 200
 
+@cache.memoize(timeout=30)
 @admin.route("/admin/student/<int:sid>", methods=["GET"])
 @jwt_required()
 def student_profile(sid):
