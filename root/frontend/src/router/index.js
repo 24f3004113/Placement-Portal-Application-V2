@@ -55,6 +55,10 @@ const router = createRouter({
             meta: { title: "Login" }
         },
         {
+            path: "/login",
+            redirect: "/"
+        },
+        {
             path: "/student/register",
             component: StudentRegister,
             meta: { title: "Student Registration" }
@@ -76,7 +80,8 @@ const router = createRouter({
         },
         {
             path: "/admin/company/:cid/drives",
-            component: AdminCompanyDrives
+            component: AdminCompanyDrives,
+            meta: {title: "Company Drives"}
         },
         {
             path: "/admin/students",
@@ -193,6 +198,13 @@ const router = createRouter({
         {
             path: "/student/application/:aid/history",
             component: ApplicationHistory
+        },
+        {
+            path: "/logout",
+            beforeEnter: (to, from, next) => {
+                localStorage.removeItem("token")
+                next("/")
+            }
         }
 
 
@@ -217,6 +229,16 @@ router.beforeEach((to) => {
         return "/"
     }
 
+})
+
+router.beforeEach((to, from) => {
+
+    if (to.path == "/logout") {
+        localStorage.removeItem("token")
+        return "/"
+    }
+
+    return true
 })
 
 export default router
