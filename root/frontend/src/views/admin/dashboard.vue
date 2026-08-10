@@ -1,84 +1,111 @@
 <template>
 
-<h2>Admin Dashboard</h2>
+    <h2 class="text-center">Admin Dashboard</h2>
 
-<table>
 
-    <thead>
-        <tr>
-            <th>Students</th>
-            <th>Companies</th>
-            <th>Drives</th>
-            <th>Applications</th>
-        </tr>
-    </thead>
 
-    <tbody>
-        <tr>
-            <td>{{ students }}</td>
-            <td>{{ companies }}</td>
-            <td>{{ drives }}</td>
-            <td>{{ applications }}</td>
-        </tr>
-    </tbody>
 
-</table>
+    <div>
+        <table class="table table-borderless table-light">
+            <thead>
+                <tr>
+                    <th class="text-center fs-3">Students</th>
+                    <th class="text-center fs-3">Companies</th>
+                    <th class="text-center fs-3">Drives</th>
+                    <th class="text-center fs-3">Applications</th>
+                </tr>
+            </thead>
 
-<br>
+            <tbody>
+                <tr>
+                    <td class="text-center fs-1">{{ students }}</td>
+                    <td class="text-center fs-1">{{ companies }}</td>
+                    <td class="text-center fs-1">{{ drives }}</td>
+                    <td class="text-center fs-1">{{ applications }}</td>
+                </tr>
+            </tbody>
+        </table>
 
-<button @click="$router.push('/admin/students')">
-    Students
-</button>
+        <hr>
+        <h2 class="text-center">Manage</h2>
 
-<button @click="$router.push('/admin/companies')">
-    Companies
-</button>
+        <table class="table table-borderless table-light">
+            <thead>
 
-<button @click="$router.push('/admin/drives')">
-    Drives
-</button>
+                <tr>
+                    <td class="text-center">
+                        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin/students')">
+                            Students
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin/companies')">
+                            Companies
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin/drives')">
+                            Drives
+                        </button>
+                    </td>
+                    <td class="text-center">
+                        <button class="bg-primary btn shadow text-white" @click="$router.push('/admin/applications')">
+                            Applications
+                        </button>
+                    </td>
+                </tr>
+            </thead>
+        </table>
 
-<button @click="$router.push('/admin/applications')">
-    Applications
-</button>
+        <div class="text-center mt-4">
+            <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+        </div>
+    </div>
 
 </template>
 
 <script>
 
-export default{
+export default {
 
-    data(){
+    data() {
 
-        return{
+        return {
 
-            students:0,
-            companies:0,
-            drives:0,
-            applications:0
+            students: 0,
+            companies: 0,
+            drives: 0,
+            applications: 0
 
         }
 
     },
 
-    async mounted(){
+    async mounted() {
 
-        let token=localStorage.getItem("token")
+        let token = localStorage.getItem("token")
 
-        let response=await fetch("http://127.0.0.1:5000/admin/dashboard",{
+        let response = await fetch("http://localhost:5000/admin/dashboard", {
 
-            headers:{
-                "Authorization":"Bearer "+token
+            headers: {
+                "Authorization": "Bearer " + token
             }
 
         })
 
-        let data=await response.json()
+        let data = await response.json()
 
-        this.students=data.students
-        this.companies=data.companies
-        this.drives=data.drives
-        this.applications=data.applications
+        if ( data.msg == "Token has expired") {
+            alert("Session expired. Please login again.")
+            localStorage.removeItem("token")
+            this.$router.push("/")
+            return
+        }
+
+        this.students = data.students
+        this.companies = data.companies
+        this.drives = data.drives
+        this.applications = data.applications
 
     }
 

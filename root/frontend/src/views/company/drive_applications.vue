@@ -1,93 +1,90 @@
 <template>
 
-    <h2>Drive Applications</h2>
+    <h1 class="text-center">Drive Applications</h1>
 
-    <table v-if="drive">
-        <tbody>
-            <tr>
-                <td>Company:</td>
-                <td>{{ company }}</td>
-            </tr>
+    <h2 class="text-center">Company: {{ company }}</h2>
+    <h2 class="text-center">Job Title: {{ drive }}</h2>
 
-            <tr>
-                <td>Job Title:</td>
-                <td>{{ drive }}</td>
-            </tr>
-        </tbody>
-
-
-    </table>
 
     <br>
 
-    <table border="1">
+    <div class="container my-5 shadow p-2 ">
+        <div class="table-responsive-md">
+            <table class="table table-striped  table-bordered table-hover ">
 
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Student</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Course</th>
-                <th>CGPA</th>
-                <th>Application Date</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Course</th>
+                        <th>CGPA</th>
+                        <th>Application Date</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
 
-        <tbody>
+                <tbody>
 
-            <tr v-if="applications.length == 0">
-                <td colspan="9">No applications found</td>
-            </tr>
+                    <tr v-if="applications.length == 0">
+                        <td colspan="9">No applications found</td>
+                    </tr>
 
-            <tr v-for="application in applications" :key="application.aid">
+                    <tr v-for="application in applications" :key="application.aid">
 
-                <td>{{ application.aid }}</td>
-                <td>{{ application.student }}</td>
-                <td>{{ application.email }}</td>
-                <td>{{ application.phone }}</td>
-                <td>{{ application.course }}</td>
-                <td>{{ application.cgpa }}</td>
-                <td>{{ application.application_date }}</td>
-                <td>{{ application.status }}</td>
-
-
-                <td>
-                    <button @click="$router.push('/company/application/' + application.aid + '/student')">
-                        View Student
-                    </button>
-                </td>
-                <td>
-                    <button @click="$router.push('/company/application/' + application.aid + '/update')">
-                        Update
-                    </button>
-
-                    <button v-if="application.status == 'Shortlisted'"
-                        @click="$router.push('/company/application/' + application.aid + '/interview')">
-                        Schedule Interview
-                    </button>
-
-                    <button v-if="application.status == 'Interview'"
-                        @click="$router.push('/company/application/' + application.aid + '/interview/update')">
-                        View / Update Interview
-                    </button>
+                        <td>{{ application.aid }}</td>
+                        <td>{{ application.student }}</td>
+                        <td>{{ application.email }}</td>
+                        <td>{{ application.phone }}</td>
+                        <td>{{ application.course }}</td>
+                        <td>{{ application.cgpa }}</td>
+                        <td>{{ application.application_date }}</td>
+                        <td>{{ application.status }}</td>
 
 
-                </td>
+                        <td>
+                            <button class="bg-primary btn shadow text-white me-2"
+                                @click="$router.push('/company/application/' + application.aid + '/student')">
+                                View Resume
+                            </button>
 
-            </tr>
+                            <button class="bg-warning btn shadow me-2"
+                                @click="$router.push('/company/application/' + application.aid + '/update')">
+                                Update
+                            </button>
 
-        </tbody>
+                            <button v-if="application.status == 'Shortlisted'"
+                                class="bg-success btn shadow text-white me-2"
+                                @click="$router.push('/company/application/' + application.aid + '/interview')">
+                                Schedule Interview
+                            </button>
 
-    </table>
+                            <button v-if="application.status == 'Interview'" class="bg-info btn shadow"
+                                @click="$router.push('/company/application/' + application.aid + '/interview/update')">
+                                View / Update Interview
+                            </button>
 
-    <br>
 
-    <button @click="$router.back()">Back</button>
+                        </td>
 
+                    </tr>
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
     <p>{{ message }}</p>
+    <br>
+    <div class="text-center mt-3">
+        <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
+
+        <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+    </div>
+
+
 
 </template>
 
@@ -109,7 +106,7 @@ export default {
         async getApplications() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/company/drive/" +
+                "http://localhost:5000/company/drive/" +
                 this.$route.params.did +
                 "/applications",
                 {
@@ -122,6 +119,13 @@ export default {
             )
 
             let data = await response.json()
+
+            if (data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
 
             if (response.ok) {
                 this.company = data.company

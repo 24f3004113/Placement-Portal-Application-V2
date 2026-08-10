@@ -5,48 +5,53 @@
     <p><b>Company:</b> {{ company }}</p>
     <p><b>Job Title:</b> {{ drive }}</p>
 
-    <table border="1">
+    <div class="container my-5 shadow p-2 ">
+        <div class="table-responsive-md">
+            <table class="table table-striped  table-bordered table-hover ">
 
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Student</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Course</th>
-                <th>CGPA</th>
-                <th>Application Date</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Student</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Course</th>
+                        <th>CGPA</th>
+                        <th>Application Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
 
-        <tbody>
+                <tbody>
 
-            <tr v-if="applications.length == 0">
-                <td colspan="8">No applications found</td>
-            </tr>
+                    <tr v-if="applications.length == 0">
+                        <td colspan="8">No applications found</td>
+                    </tr>
 
-            <tr v-for="application in applications" :key="application.aid">
+                    <tr v-for="application in applications" :key="application.aid">
 
-                <td>{{ application.aid }}</td>
-                <td>{{ application.student }}</td>
-                <td>{{ application.email }}</td>
-                <td>{{ application.phone }}</td>
-                <td>{{ application.course }}</td>
-                <td>{{ application.cgpa }}</td>
-                <td>{{ application.application_date }}</td>
-                <td>{{ application.status }}</td>
-                <td>
-                    <button @click="$router.push('/admin/student/' + application.sid)">View Student</button>
-                    <button @click="$router.push('/admin/application/' + application.aid + '/history')">History</button>
-                </td>
+                        <td>{{ application.aid }}</td>
+                        <td>{{ application.student }}</td>
+                        <td>{{ application.email }}</td>
+                        <td>{{ application.phone }}</td>
+                        <td>{{ application.course }}</td>
+                        <td>{{ application.cgpa }}</td>
+                        <td>{{ application.application_date }}</td>
+                        <td>{{ application.status }}</td>
+                        <td>
+                            <button @click="$router.push('/admin/student/' + application.sid)">View Student</button>
+                            <button
+                                @click="$router.push('/admin/application/' + application.aid + '/history')">History</button>
+                        </td>
 
-            </tr>
+                    </tr>
 
-        </tbody>
+                </tbody>
 
-    </table>
+            </table>
+        </div>
+    </div>
 
     <br>
 
@@ -74,7 +79,7 @@ export default {
         async getApplications() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/admin/drive/" +
+                "http://localhost:5000/admin/drive/" +
                 this.$route.params.did +
                 "/applications",
                 {
@@ -87,6 +92,13 @@ export default {
             )
 
             let data = await response.json()
+
+            if ( data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
 
             if (response.ok) {
                 this.company = data.company

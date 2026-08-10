@@ -2,92 +2,103 @@
 
 
 
-<h2>Application History</h2>
+    <h2>Application History</h2>
 
-<div v-if="application">
 
-    <table border="1">
 
-        <tbody>
+    <div v-if="application">
 
-            <tr>
-                <td>Application No.</td>
-                <td>{{ application.aid }}</td>
-            </tr>
+        <div class="container my-5 shadow p-2 ">
+            <div class="table-responsive-md">
+                <table class="table table-striped  table-bordered table-hover ">
 
-            <tr>
-                <td>Student</td>
-                <td>{{ application.student }}</td>
-            </tr>
+                    <tbody>
 
-            <tr>
-                <td>Course</td>
-                <td>{{ application.course }}</td>
-            </tr>
+                        <tr>
+                            <td>Application No.</td>
+                            <td>{{ application.aid }}</td>
+                        </tr>
 
-            <tr>
-                <td>Skills</td>
-                <td>{{ application.skills }}</td>
-            </tr>
+                        <tr>
+                            <td>Student</td>
+                            <td>{{ application.student }}</td>
+                        </tr>
 
-            <tr>
-                <td>CGPA</td>
-                <td>{{ application.cgpa }}</td>
-            </tr>
+                        <tr>
+                            <td>Course</td>
+                            <td>{{ application.course }}</td>
+                        </tr>
 
-            <tr>
-                <td>Company</td>
-                <td>{{ application.company }}</td>
-            </tr>
+                        <tr>
+                            <td>Skills</td>
+                            <td>{{ application.skills }}</td>
+                        </tr>
 
-            <tr>
-                <td>Applied Position</td>
-                <td>{{ application.job_title }}</td>
-            </tr>
+                        <tr>
+                            <td>CGPA</td>
+                            <td>{{ application.cgpa }}</td>
+                        </tr>
 
-            <tr>
-                <td>Application Date</td>
-                <td>{{ application.application_date }}</td>
-            </tr>
+                        <tr>
+                            <td>Company</td>
+                            <td>{{ application.company }}</td>
+                        </tr>
 
-            <tr>
-                <td>Current Status</td>
-                <td>{{ application.status }}</td>
-            </tr>
+                        <tr>
+                            <td>Applied Position</td>
+                            <td>{{ application.job_title }}</td>
+                        </tr>
 
-        </tbody>
+                        <tr>
+                            <td>Application Date</td>
+                            <td>{{ application.application_date }}</td>
+                        </tr>
 
-    </table>
+                        <tr>
+                            <td>Current Status</td>
+                            <td>{{ application.status }}</td>
+                        </tr>
 
-    <br>
+                    </tbody>
 
-    <h3>Status History</h3>
+                </table>
+            </div>
+        </div>
 
-    <table border="1">
+        <br>
 
-        <tbody>
+        <h3>Status History</h3>
 
-            <tr>
-                <th>Status</th>
-                <th>Feedback</th>
-                <th>Updated At</th>
-            </tr>
+        <div class="container my-5 shadow p-2 ">
+            <div class="table-responsive-md">
+                <table class="table table-striped  table-bordered table-hover ">
 
-            <tr v-for="h in application.history" :key="h.hid">
-                <td>{{ h.status }}</td>
-                <td>{{ h.feedback || "N/A" }}</td>
-                <td>{{ h.updated_at }}</td>
-            </tr>
+                    <tbody>
 
-        </tbody>
+                        <tr>
+                            <th>Status</th>
+                            <th>Feedback</th>
+                            <th>Updated At</th>
+                        </tr>
 
-    </table>
+                        <tr v-for="h in application.history" :key="h.hid">
+                            <td>{{ h.status }}</td>
+                            <td>{{ h.feedback || "N/A" }}</td>
+                            <td>{{ h.updated_at }}</td>
+                        </tr>
 
-</div>
+                    </tbody>
 
-<p>{{ message }}</p>
 
-<button @click="$router.back()">Back</button>
+                </table>
+            </div>
+        </div>
+
+    </div>
+
+    <p>{{ message }}</p>
+
+    <button @click="$router.back()">Back</button>
 
 </template>
 
@@ -105,7 +116,7 @@ export default {
     async mounted() {
 
         let response = await fetch(
-            "http://127.0.0.1:5000/admin/application/" +
+            "http://localhost:5000/admin/application/" +
             this.$route.params.aid +
             "/history",
             {
@@ -119,7 +130,7 @@ export default {
 
         let data = await response.json()
 
-        if (response.status == 401 && data.msg == "Token has expired") {
+        if ( data.msg == "Token has expired") {
             alert("Session expired. Please login again.")
             localStorage.removeItem("token")
             this.$router.push("/")

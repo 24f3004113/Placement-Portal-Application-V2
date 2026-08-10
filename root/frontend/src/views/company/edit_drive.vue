@@ -1,50 +1,84 @@
 <template>
 
-<h2>Edit Placement Drive</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <h2 class="text-center">Edit Placement Drive</h2>
 
-<form @submit.prevent="updateDrive">
+            <form @submit.prevent="updateDrive">
 
-<label>Job Title</label>
-<input type="text" v-model="form.job_title" required>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Job Title</label>
+                    <input type="text" v-model="form.job_title"
+                        class="form-control" required>
+                </div>
 
-<label>Description</label>
-<textarea v-model="form.description" required></textarea>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea v-model="form.description"
+                        class="form-control" required></textarea>
+                </div>
 
-<label>Course</label>
-<input type="text" v-model="form.course" required>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Course</label>
+                    <input type="text" v-model="form.course"
+                        class="form-control" required>
+                </div>
 
-<label>Minimum CGPA</label>
-<input type="number" step="0.01" v-model="form.min_cgpa" required>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Minimum CGPA</label>
+                    <input type="number" step="0.01" v-model="form.min_cgpa"
+                        class="form-control" required>
+                </div>
 
-<label>Graduation Year</label>
-<input type="number" v-model="form.graduation_year" required>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Graduation Year</label>
+                    <input type="number" v-model="form.graduation_year"
+                        class="form-control" required>
+                </div>
 
-<label>Salary</label>
-<input type="number" v-model="form.salary" required>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Salary</label>
+                    <input type="number" v-model="form.salary"
+                        class="form-control" required>
+                </div>
 
-<label>Application Deadline</label>
-<input type="date" v-model="form.application_deadline" required>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Application Deadline</label>
+                    <input type="date" v-model="form.application_deadline"
+                        class="form-control" required>
+                </div>
 
-<label>Status</label>
-<select v-model="form.status" required>
-    <option value="Open">Open</option>
-    <option value="Closed">Closed</option>
-</select>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Status</label>
+                    <select v-model="form.status" class="form-select" required>
+                        <option value="Open">Open</option>
+                        <option value="Closed">Closed</option>
+                    </select>
+                </div>
 
-<button type="submit">Update Drive</button>
-<button type="button" @click="$router.back()">Cancel</button>
+                <div class="text-center">
+                    <button type="submit" class="bg-success btn shadow text-white me-2">
+                        Update Drive
+                    </button>
+                    <button type="button" class="btn btn-secondary"
+                        @click="$router.back()">Cancel</button>
+                </div>
 
-</form>
+            </form>
 
-<p>{{ message }}</p>
+            <p class="text-center mt-3">{{ message }}</p>
+
+            <div class="text-center mt-3">
+                <button class="btn btn-secondary me-2"
+                    @click="$router.back()">Back</button>
+                <button class="bg-danger btn shadow text-white"
+                    @click="$router.push('/logout')">Logout</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 </template>
 
@@ -75,7 +109,7 @@ export default {
         async getDrive() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/company/drive/" +
+                "http://localhost:5000/company/drive/" +
                 this.$route.params.did,
                 {
                     headers: {
@@ -88,6 +122,13 @@ export default {
 
             let data = await response.json()
 
+            if ( data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
+
             if (response.ok)
                 this.form = data
             else
@@ -98,7 +139,7 @@ export default {
         async updateDrive() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/company/edit_drive/" +
+                "http://localhost:5000/company/edit_drive/" +
                 this.$route.params.did,
                 {
                     method: "PUT",
@@ -113,6 +154,13 @@ export default {
             )
 
             let data = await response.json()
+
+            if ( data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
 
             this.message = data.message
 

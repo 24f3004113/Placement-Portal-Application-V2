@@ -1,88 +1,87 @@
 <template>
 
-    <h2>Student Dashboard</h2>
+<div class="container mt-4">
+    <h2 class="text-center">Student Dashboard</h2>
+    <p class="text-center">Welcome {{ student }}</p>
 
-    <p>Welcome {{ student }}</p>
+    <div class="text-center mb-3">
+        <button class="bg-secondary btn shadow text-white me-2" @click="$router.push('/student/applications')">My Applications</button>
+        <button class="bg-secondary btn shadow text-white me-2" @click="$router.push('/student/history')">Application History</button>
+        <button class="bg-secondary btn shadow text-white me-2" @click="$router.push('/student/interviews')">My Interviews</button>
+        <button class="bg-secondary btn shadow text-white me-2" @click="$router.push('/student/placements')">My Placement</button>
+        <button class="bg-secondary btn shadow text-white me-2" @click="$router.push('/student/profile/update')">View/Edit Profile</button>
+        <button class="bg-secondary btn shadow text-white" @click="$router.push('/student/resume/update')">View/Update Resume</button>
+    </div>
 
-    <button @click="$router.push('/student/applications')"> My Applications</button>
-    <button @click="$router.push('/student/history')">Application History</button>
-    <button @click="$router.push('/student/interviews')">My Interviews</button>
-    <button @click="$router.push('/student/placements')">My Placement</button>
-    <button @click="$router.push('/student/profile/update')">View/Edit Profile</button>
-    <button @click="$router.push('/student/resume/update')">View/Update Resume</button>
+    <div class="row justify-content-center">
+        <div class="col-md-8">
+            <table class="table table-borderless table-light">
+                <thead>
+                    <tr>
+                        <th class="text-center">Total Applications</th>
+                        <th class="text-center">Shortlisted</th>
+                        <th class="text-center">Interviews</th>
+                        <th class="text-center">Placements</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="text-center">{{ total_applications }}</td>
+                        <td class="text-center">{{ shortlisted }}</td>
+                        <td class="text-center">{{ interviews }}</td>
+                        <td class="text-center">{{ placements }}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <table border="1">
-        <thead>
-            <tr>
-                <th>Total Applications</th>
-                <th>Shortlisted</th>
-                <th>Interviews</th>
-                <th>Placements</th>
-            </tr>
-        </thead>
+    <h3 class="text-center mt-3">Available Placement Drives</h3>
 
-        <tbody>
-            <tr>
-                <td>{{ total_applications }}</td>
-                <td>{{ shortlisted }}</td>
-                <td>{{ interviews }}</td>
-                <td>{{ placements }}</td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="text-center mb-3">
+        <input type="text" class="form-control d-inline-block w-50"
+            placeholder="Search Company, Job or Description"
+            v-model="search" @input="getDashboard">
+        <button class="bg-secondary btn shadow text-white ms-2" @click="clearSearch">Clear</button>
+    </div>
 
-    <br>
+        <div class="container my-5 shadow p-2 ">
+            <div class="table-responsive-md">
+                <table class="table table-striped  table-bordered table-hover ">
+                <thead>
+                    <tr>
+                        <th>ID</th><th>Company</th><th>Job Title</th>
+                        <th>Salary</th><th>Application Deadline</th><th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr v-if="drives.length == 0">
+                        <td colspan="6" class="text-center">No placement drives found</td>
+                    </tr>
+                    <tr v-else v-for="drive in drives" :key="drive.did">
+                        <td>{{ drive.did }}</td>
+                        <td>{{ drive.company }}</td>
+                        <td>{{ drive.job_title }}</td>
+                        <td>{{ drive.salary }}</td>
+                        <td>{{ drive.application_deadline }}</td>
+                        <td>
+                            <button class="bg-primary btn shadow text-white me-1"
+                                @click="$router.push('/student/drive/' + drive.did)">View Drive Details</button>
+                            <button v-if="!drive.applied"
+                                class="bg-success btn shadow text-white me-1"
+                                @click="apply(drive.did)">Apply</button>
+                            <button v-else disabled class="btn btn-warning">Already Applied</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
 
-    <h3>Available Placement Drives</h3>
-
-    <input type="text" placeholder="Search Company, Job or Description" v-model="search" @input="getDashboard">
-
-    <button @click="clearSearch">Clear</button>
-
-    <br><br>
-
-    <table border="1">
-
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Company</th>
-                <th>Job Title</th>
-                <th>Salary</th>
-                <th>Application Deadline</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-
-        <tbody>
-
-            <tr v-if="drives.length == 0">
-                <td colspan="6">No placement drives found</td>
-            </tr>
-
-            <tr v-else v-for="drive in drives" :key="drive.did">
-
-                <td>{{ drive.did }}</td>
-                <td>{{ drive.company }}</td>
-                <td>{{ drive.job_title }}</td>
-                <td>{{ drive.salary }}</td>
-                <td>{{ drive.application_deadline }}</td>
-
-                <td>
-                    <button @click="$router.push('/student/drive/' + drive.did)">View Details</button>
-                    <button v-if="!drive.applied" @click="apply(drive.did)">Apply</button>
-                    <button v-else disabled>Already Applied</button>
-                </td>
-
-            </tr>
-
-        </tbody>
-
-    </table>
-
-    <br>
-
-    <button @click="logout">Logout</button>
+    <div class="text-center mt-3">
+        <button class="bg-danger btn shadow text-white" @click="logout">Logout</button>
+    </div>
+</div>
 
 </template>
 
@@ -106,8 +105,10 @@ export default {
 
         async getDashboard() {
 
+
+
             let response = await fetch(
-                "http://127.0.0.1:5000/student/dashboard?search=" + this.search,
+                "http://localhost:5000/student/dashboard?search=" + this.search,
                 {
                     headers: {
                         "Authorization":
@@ -118,6 +119,13 @@ export default {
             )
 
             let data = await response.json()
+
+            if ( data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
 
             this.student = data.student
             this.total_applications = data.total_applications
@@ -135,7 +143,7 @@ export default {
         async apply(did) {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/student/drive/" + did + "/apply",
+                "http://localhost:5000/student/drive/" + did + "/apply",
                 {
                     method: "POST",
                     headers: {

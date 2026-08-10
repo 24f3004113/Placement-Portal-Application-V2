@@ -1,95 +1,120 @@
 <template>
 
-    <h2>Application Details</h2>
+    <h2 class="text-center">Application Details</h2>
 
-    <table border="1" v-if="application">
-        <tbody>
-            <tr>
-                <td>Student</td>
-                <td>{{ application.student }}</td>
-            </tr>
-            <tr>
-                <td>Email</td>
-                <td>{{ application.email }}</td>
-            </tr>
-            <tr>
-                <td>Phone</td>
-                <td>{{ application.phone }}</td>
-            </tr>
-            <tr>
-                <td>Course</td>
-                <td>{{ application.course }}</td>
-            </tr>
-            <tr>
-                <td>CGPA</td>
-                <td>{{ application.cgpa }}</td>
-            </tr>
-            <tr>
-                <td>Job Title</td>
-                <td>{{ application.job_title }}</td>
-            </tr>
-            <tr>
-                <td>Application Date</td>
-                <td>{{ application.application_date }}</td>
-            </tr>
-            <tr>
-                <td>Status</td>
-                <td>{{ application.status }}</td>
-            </tr>
-            <tr>
-                <td>Feedback</td>
-                <td>{{ application.feedback }}</td>
-            </tr>
-        </tbody>
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <table class="table table-bordered " v-if="application">
+                    <tbody>
+                        <tr>
+                            <td>Student</td>
+                            <td>{{ application.student }}</td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>{{ application.email }}</td>
+                        </tr>
+                        <tr>
+                            <td>Phone</td>
+                            <td>{{ application.phone }}</td>
+                        </tr>
+                        <tr>
+                            <td>Course</td>
+                            <td>{{ application.course }}</td>
+                        </tr>
+                        <tr>
+                            <td>CGPA</td>
+                            <td>{{ application.cgpa }}</td>
+                        </tr>
+                        <tr>
+                            <td>Job Title</td>
+                            <td>{{ application.job_title }}</td>
+                        </tr>
+                        <tr>
+                            <td>Application Date</td>
+                            <td>{{ application.application_date }}</td>
+                        </tr>
+                        <tr>
+                            <td>Status</td>
+                            <td>{{ application.status }}</td>
+                        </tr>
+                        <tr>
+                            <td>Feedback</td>
+                            <td>{{ application.feedback }}</td>
+                        </tr>
+                    </tbody>
 
-    </table>
+                </table>
+            </div>
+        </div>
+    </div>
 
     <br>
 
-    <h2>Update Interview</h2>
 
-    <form @submit.prevent="updateInterview">
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
 
-        <label>Interview Date</label>
-        <input type="date" v-model="form.interview_date" required>
+                <h2 class="text-center">Update Interview</h2>
 
-        <br><br>
+                <form @submit.prevent="updateInterview" class="form-control">
 
-        <label>Interview Time</label>
-        <input type="time" v-model="form.interview_time" required>
+                    <div class="mb-3">
+                        <label class="form-label">Interview Date</label>
+                        <input type="date" v-model="form.interview_date" class="form-control" required>
+                    </div>
 
-        <br><br>
+                    <div class="mb-3">
+                        <label class="form-label">Interview Time</label>
+                        <input type="time" v-model="form.interview_time" class="form-control" required>
+                    </div>
 
-        <label>Interview Mode</label>
-        <select v-model="form.interview_mode" required>
-            <option value="Online">Online</option>
-            <option value="Offline">Offline</option>
-        </select>
+                    <div class="mb-3">
+                        <label class="form-label">Interview Mode</label>
+                        <select v-model="form.interview_mode" class="form-select" required>
+                            <option value="Online">Online</option>
+                            <option value="Offline">Offline</option>
+                        </select>
+                    </div>
 
-        <br><br>
+                    <div class="mb-3">
+                        <label class="form-label">Interview Link</label>
+                        <input type="text" v-model="form.interview_link" class="form-control">
+                    </div>
 
-        <label>Interview Link</label>
-        <input type="text" v-model="form.interview_link">
+                    <div class="mb-3">
+                        <label class="form-label">Interview Location</label>
+                        <input type="text" v-model="form.interview_location" class="form-control">
+                    </div>
 
-        <br><br>
+                    <div class="mb-3">
+                        <label class="form-label">Remarks</label>
+                        <textarea v-model="form.remarks" class="form-control"></textarea>
+                    </div>
 
-        <label>Interview Location</label>
-        <input type="text" v-model="form.interview_location">
+                    <div class="text-center">
+                        <button type="submit" class="bg-success btn shadow text-white me-2">
+                            Update Interview
+                        </button>
 
-        <br><br>
+                        <button type="button" class="btn btn-secondary" @click="$router.back()">Cancel</button>
+                    </div>
 
-        <label>Remarks</label>
-        <textarea v-model="form.remarks"></textarea>
+                </form>
 
-        <br><br>
+                <p class="text-center mt-3">{{ message }}</p>
 
-        <button type="submit">Update Interview</button>
-        <button type="button" @click="$router.back()">Cancel</button>
+                <div class="text-center mt-3">
+                    <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
 
-    </form>
+                    <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+                </div>
 
-    <p>{{ message }}</p>
-
+            </div>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -120,7 +145,7 @@ export default {
         async getInterview() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/company/application/" +
+                "http://localhost:5000/company/application/" +
                 this.$route.params.aid +
                 "/interview",
                 {
@@ -133,6 +158,13 @@ export default {
             )
 
             let data = await response.json()
+
+            if (data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
 
             if (response.ok) {
 
@@ -157,7 +189,7 @@ export default {
         async getApplication(aid) {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/company/application/" + aid,
+                "http://localhost:5000/company/application/" + aid,
                 {
                     headers: {
                         "Authorization":
@@ -169,6 +201,13 @@ export default {
 
             let data = await response.json()
 
+            if (data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
+
             if (response.ok)
                 this.application = data
             else
@@ -179,7 +218,7 @@ export default {
         async updateInterview() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/company/interview/" +
+                "http://localhost:5000/company/interview/" +
                 this.form.iid +
                 "/update",
                 {
@@ -195,6 +234,13 @@ export default {
             )
 
             let data = await response.json()
+
+            if (data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
 
             this.message = data.message
 

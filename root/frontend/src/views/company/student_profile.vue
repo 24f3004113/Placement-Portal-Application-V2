@@ -1,68 +1,68 @@
 <template>
 
-<h2>Student Profile</h2>
+    <div class="container mt-4">
+        <h2 class="text-center">Student Profile</h2>
 
-<table border="1" v-if="student">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
 
-<tbody>
+                <table class="table table-borderless table-light" v-if="student">
+                    <tbody>
+                        <tr>
+                            <td>Name</td>
+                            <td>{{ student.name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>{{ student.email }}</td>
+                        </tr>
+                        <tr>
+                            <td>Phone</td>
+                            <td>{{ student.phone }}</td>
+                        </tr>
+                        <tr>
+                            <td>Course</td>
+                            <td>{{ student.course }}</td>
+                        </tr>
+                        <tr>
+                            <td>CGPA</td>
+                            <td>{{ student.cgpa }}</td>
+                        </tr>
+                        <tr>
+                            <td>Graduation Year</td>
+                            <td>{{ student.graduation_year }}</td>
+                        </tr>
+                        <tr>
+                            <td>Skills</td>
+                            <td>{{ student.skills }}</td>
+                        </tr>
+                    </tbody>
+                </table>
 
-<tr>
-    <td>Name</td>
-    <td>{{ student.name }}</td>
-</tr>
+            </div>
+        </div>
+        <p v-if="student && !student.resume">
+            Resume not uploaded
+        </p>
 
-<tr>
-    <td>Email</td>
-    <td>{{ student.email }}</td>
-</tr>
 
-<tr>
-    <td>Phone</td>
-    <td>{{ student.phone }}</td>
-</tr>
+    </div>
 
-<tr>
-    <td>Course</td>
-    <td>{{ student.course }}</td>
-</tr>
+    <div v-if="student && student.resume" class="text-center">
 
-<tr>
-    <td>CGPA</td>
-    <td>{{ student.cgpa }}</td>
-</tr>
+        <h3>Resume</h3>
 
-<tr>
-    <td>Graduation Year</td>
-    <td>{{ student.graduation_year }}</td>
-</tr>
+        <iframe :src="'http://localhost:5000/static/resumes/' + student.resume" width="700" height="990">
+        </iframe>
 
-<tr>
-    <td>Skills</td>
-    <td>{{ student.skills }}</td>
-</tr>
+    </div>
+    <div class="text-center mt-3">
+        <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
 
-</tbody>
-</table>
+        <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+    </div>
 
-<div v-if="student && student.resume" class="text-center">
 
-    <h3>Resume</h3>
-
-    <iframe
-        :src="'http://127.0.0.1:5000/static/resumes/' + student.resume"
-        width="700"
-        height="990">
-    </iframe>
-
-</div>
-
-<p v-if="student && !student.resume">
-    Resume not uploaded
-</p>
-
-<p>{{ message }}</p>
-
-<button @click="$router.back()">Back</button>
 
 </template>
 
@@ -80,7 +80,7 @@ export default {
     async mounted() {
 
         let response = await fetch(
-            "http://127.0.0.1:5000/company/application/" +
+            "http://localhost:5000/company/application/" +
             this.$route.params.aid +
             "/student",
             {
@@ -94,7 +94,7 @@ export default {
 
         let data = await response.json()
 
-        if (response.status == 401 && data.msg == "Token has expired") {
+        if (data.msg == "Token has expired") {
             alert("Session expired. Please login again.")
             localStorage.removeItem("token")
             this.$router.push("/")

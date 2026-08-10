@@ -1,55 +1,86 @@
 <template>
 
-    <h2>Edit Profile</h2>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
 
-    <form @submit.prevent="updateProfile">
+            <h2 class="text-center">Edit Profile</h2>
 
-        <label>Name</label>
-        <input type="text" v-model="form.name" required>
+            <form @submit.prevent="updateProfile">
 
-        <br><br>
+                <div class="mb-3">
+                    <label class="form-label">Name</label>
+                    <input type="text" v-model="form.name"
+                        class="form-control" required>
+                </div>
 
-        <label>Email</label>
-        <input type="email" v-model="form.email" required>
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" v-model="form.email"
+                        class="form-control" required>
+                </div>
 
-        <br><br>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" v-model="form.password"
+                        class="form-control">
+                </div>
 
-        <label>Password</label>
-        <input type="password" v-model="form.password">
+                <div class="mb-3">
+                    <label class="form-label">Phone</label>
+                    <input type="text" v-model="form.phone"
+                        class="form-control" required>
+                </div>
 
-        <br><br>
+                <div class="mb-3">
+                    <label class="form-label">Course</label>
+                    <input type="text" v-model="form.course"
+                        class="form-control" required>
+                </div>
 
-        <label>Phone</label>
-        <input type="text" v-model="form.phone" required>
+                <div class="mb-3">
+                    <label class="form-label">CGPA</label>
+                    <input type="number" step="0.01" v-model="form.cgpa"
+                        class="form-control" required>
+                </div>
 
-        <br><br>
+                <div class="mb-3">
+                    <label class="form-label">Graduation Year</label>
+                    <input type="number" v-model="form.graduation_year"
+                        class="form-control" required>
+                </div>
 
-        <label>Course</label>
-        <input type="text" v-model="form.course" required>
+                <div class="mb-3">
+                    <label class="form-label">Skills</label>
+                    <textarea v-model="form.skills"
+                        class="form-control"></textarea>
+                </div>
 
-        <br><br>
+                <div class="text-center">
+                    <button type="submit"
+                        class="bg-success btn shadow text-white me-2">
+                        Update Profile
+                    </button>
 
-        <label>CGPA</label>
-        <input type="number" step="0.01" v-model="form.cgpa" required>
+                    <button type="button" class="btn btn-secondary"
+                        @click="$router.back()">Cancel</button>
+                </div>
 
-        <br><br>
+            </form>
 
-        <label>Graduation Year</label>
-        <input type="number" v-model="form.graduation_year" required>
+            <p class="text-center mt-3">{{ message }}</p>
 
-        <br><br>
+            <div class="text-center mt-3">
+                <button class="btn btn-secondary me-2"
+                    @click="$router.back()">Back</button>
 
-        <label>Skills</label>
-        <textarea v-model="form.skills"></textarea>
+                <button class="bg-danger btn shadow text-white"
+                    @click="$router.push('/logout')">Logout</button>
+            </div>
 
-        <br><br>
-
-        <button type="submit">Update Profile</button>
-        <button type="button" @click="$router.back()">Cancel</button>
-
-    </form>
-
-    <p>{{ message }}</p>
+        </div>
+    </div>
+</div>
 
 </template>
 
@@ -79,7 +110,7 @@ export default {
         async getProfile() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/student/profile",
+                "http://localhost:5000/student/profile",
                 {
                     headers: {
                         "Authorization":
@@ -91,7 +122,7 @@ export default {
 
             let data = await response.json()
 
-                        if (response.status == 401 && data.msg == "Token has expired") {
+            if ( data.msg == "Token has expired") {
 
                 alert("Session expired. Please login again.")
 
@@ -136,7 +167,7 @@ export default {
                 data.password = this.form.password
 
             let response = await fetch(
-                "http://127.0.0.1:5000/student/profile/update",
+                "http://localhost:5000/student/profile/update",
                 {
                     method: "PUT",
 
@@ -153,6 +184,13 @@ export default {
             )
 
             let result = await response.json()
+
+            if ( data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
 
 
             this.message = result.message

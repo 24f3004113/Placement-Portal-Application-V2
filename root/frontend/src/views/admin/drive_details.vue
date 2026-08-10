@@ -1,8 +1,10 @@
 <template>
 
     <h2>Drive Details</h2>
+     <div class="container my-5 shadow p-2 ">
+        <div class="table-responsive-md">
+            <table class="table table-striped  table-bordered table-hover " v-if="drive">
 
-    <table border="1" v-if="drive">
 
         <tbody>
             <tr>
@@ -51,7 +53,9 @@
             </tr>
         </tbody>
 
-    </table>
+                </table>
+            </div>
+        </div>
 
     <p>{{ message }}</p>
 
@@ -73,7 +77,7 @@ export default {
     async mounted() {
 
         let response = await fetch(
-            "http://127.0.0.1:5000/admin/drive/" +
+            "http://localhost:5000/admin/drive/" +
             this.$route.params.did,
             {
                 headers: {
@@ -86,7 +90,7 @@ export default {
 
         let data = await response.json()
 
-        if (response.status == 401 && data.msg == "Token has expired") {
+        if ( data.msg == "Token has expired") {
             alert("Session expired. Please login again.")
             localStorage.removeItem("token")
             this.$router.push("/")

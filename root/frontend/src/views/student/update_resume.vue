@@ -1,34 +1,52 @@
 <template>
 
-    <h2>Update Resume</h2>
+    <div class="container mt-5">
+        <div class="row justify-content-center">
+            <div class="col-md-5">
 
-    <form @submit.prevent="updateResume">
+                <h2 class="text-center">Update Resume</h2>
 
-        <label>Select Resume</label>
-        <input type="file" accept=".pdf" @change="selectResume" required>
+                <form @submit.prevent="updateResume">
 
-        <br><br>
+                    <div class="mb-3">
+                        <label class="form-label">Select Resume</label>
+                        <input type="file" accept=".pdf" @change="selectResume" class="form-control" required>
+                    </div>
 
-        <button type="submit">Update Resume</button>
-        <button type="button" @click="$router.back()">Cancel</button>
+                    <div class="text-center">
+                        <button type="submit" class="bg-success btn shadow text-white me-2">
+                            Update Resume
+                        </button>
 
-    </form>
+                        <button type="button" class="btn btn-secondary" @click="$router.back()">Cancel</button>
+                    </div>
 
-    <p>{{ message }}</p>
+                </form>
+
+                <p class="text-center mt-3">{{ message }}</p>
+
+
+
+            </div>
+        </div>
+    </div>
 
 
     <div v-if="currentResume" class="text-center">
 
         <h3>Current Resume</h3>
 
-        <iframe :src="'http://127.0.0.1:5000/static/resumes/' + currentResume" width="700"
-            height="990"></iframe>
+        <iframe :src="'http://localhost:5000/static/resumes/' + currentResume" width="700" height="990"></iframe>
 
         <br>
     </div>
 
 
+    <div class="text-center mt-3">
+        <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
 
+        <button class="bg-danger btn shadow text-white" @click="$router.push('/logout')">Logout</button>
+    </div>
 </template>
 
 <script>
@@ -48,7 +66,7 @@ export default {
         async getProfile() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/student/profile",
+                "http://localhost:5000/student/profile",
                 {
                     headers: {
                         "Authorization":
@@ -60,7 +78,7 @@ export default {
 
             let data = await response.json()
 
-            if (response.status == 401 && data.msg == "Token has expired") {
+            if (data.msg == "Token has expired") {
 
                 alert("Session expired. Please login again.")
 
@@ -88,7 +106,7 @@ export default {
             formData.append("resume", this.resumeFile)
 
             let response = await fetch(
-                "http://127.0.0.1:5000/student/resume/update",
+                "http://localhost:5000/student/resume/update",
                 {
                     method: "PUT",
 
@@ -104,6 +122,13 @@ export default {
             )
 
             let data = await response.json()
+
+            if (data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
 
             this.message = data.message
 

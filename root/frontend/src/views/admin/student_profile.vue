@@ -1,40 +1,69 @@
 <template>
 
-<h2>Student Profile</h2>
+    <h2>Student Profile</h2>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
 
-<table border="1" v-if="student">
+                <table class="table table-bordered table-hover shadow" v-if="student">
 
-<tbody>
 
-<tr><td>ID</td><td>{{ student.sid }}</td></tr>
-<tr><td>Name</td><td>{{ student.name }}</td></tr>
-<tr><td>Email</td><td>{{ student.email }}</td></tr>
-<tr><td>Phone</td><td>{{ student.phone }}</td></tr>
-<tr><td>Course</td><td>{{ student.course }}</td></tr>
-<tr><td>CGPA</td><td>{{ student.cgpa }}</td></tr>
-<tr><td>Graduation Year</td><td>{{ student.graduation_year }}</td></tr>
-<tr><td>Skills</td><td>{{ student.skills }}</td></tr>
 
-</tbody>
-</table>
+                    <tbody>
 
-<div v-if="student && student.resume" class="text-center">
+                        <tr>
+                            <td>ID</td>
+                            <td>{{ student.sid }}</td>
+                        </tr>
+                        <tr>
+                            <td>Name</td>
+                            <td>{{ student.name }}</td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>{{ student.email }}</td>
+                        </tr>
+                        <tr>
+                            <td>Phone</td>
+                            <td>{{ student.phone }}</td>
+                        </tr>
+                        <tr>
+                            <td>Course</td>
+                            <td>{{ student.course }}</td>
+                        </tr>
+                        <tr>
+                            <td>CGPA</td>
+                            <td>{{ student.cgpa }}</td>
+                        </tr>
+                        <tr>
+                            <td>Graduation Year</td>
+                            <td>{{ student.graduation_year }}</td>
+                        </tr>
+                        <tr>
+                            <td>Skills</td>
+                            <td>{{ student.skills }}</td>
+                        </tr>
 
-<h3>Resume</h3>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        </div>
 
-<iframe
-    :src="'http://127.0.0.1:5000/static/resumes/' + student.resume"
-    width="700"
-    height="990">
-</iframe>
+        <div v-if="student && student.resume" class="text-center">
 
-</div>
+            <h3>Resume</h3>
 
-<p v-else-if="student">Resume not uploaded</p>
+            <iframe :src="'http://localhost:5000/static/resumes/' + student.resume" width="700" height="990">
+            </iframe>
 
-<p>{{ message }}</p>
+        </div>
 
-<button @click="$router.back()">Back</button>
+        <p v-else-if="student">Resume not uploaded</p>
+
+        <p>{{ message }}</p>
+
+        <button @click="$router.back()">Back</button>
 
 </template>
 
@@ -42,43 +71,43 @@
 
 export default {
 
-data() {
-    return {
-        student: null,
-        message: ""
-    }
-},
-
-async mounted() {
-
-    let response = await fetch(
-        "http://127.0.0.1:5000/admin/student/" +
-        this.$route.params.sid,
-        {
-            headers: {
-                "Authorization":
-                    "Bearer " + localStorage.getItem("token")
-            },
-            credentials: "include"
+    data() {
+        return {
+            student: null,
+            message: ""
         }
-    )
+    },
 
-    let data = await response.json()
+    async mounted() {
 
-    if (response.status == 401 && data.msg == "Token has expired") {
+        let response = await fetch(
+            "http://localhost:5000/admin/student/" +
+            this.$route.params.sid,
+            {
+                headers: {
+                    "Authorization":
+                        "Bearer " + localStorage.getItem("token")
+                },
+                credentials: "include"
+            }
+        )
 
-        alert("Session expired. Please login again.")
-        localStorage.removeItem("token")
-        this.$router.push("/")
-        return
+        let data = await response.json()
 
+        if ( data.msg == "Token has expired") {
+
+            alert("Session expired. Please login again.")
+            localStorage.removeItem("token")
+            this.$router.push("/")
+            return
+
+        }
+
+        if (response.ok)
+            this.student = data
+        else
+            this.message = data.message || data.msg
     }
-
-    if (response.ok)
-        this.student = data
-    else
-        this.message = data.message || data.msg
-}
 
 }
 

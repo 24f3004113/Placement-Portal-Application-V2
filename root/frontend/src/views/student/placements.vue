@@ -1,33 +1,37 @@
 <template>
+    <div class="container mt-4">
+        <h2 class="text-center">My Placement</h2>
 
-<h2>My Placement</h2>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <table class="table table-striped table-bordered table-hover border-dark">
+                    <tbody>
+                        <tr>
+                            <th>Company</th>
+                            <th>Position</th>
+                            <th>Salary</th>
+                            <th>Joining Date</th>
+                        </tr>
 
-<table border="1">
+                        <tr v-for="p in placements" :key="p.pid">
+                            <td>{{ p.company }}</td>
+                            <td>{{ p.position }}</td>
+                            <td>{{ p.salary }}</td>
+                            <td>{{ p.joining_date }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="text-center mt-3">
+        <button class="btn btn-secondary me-2"
+            @click="$router.back()">Back</button>
 
-<tbody>
+        <button class="bg-danger btn shadow text-white"
+            @click="$router.push('/logout')">Logout</button>
+    </div>
 
-<tr>
-    <th>Company</th>
-    <th>Position</th>
-    <th>Salary</th>
-    <th>Joining Date</th>
-</tr>
-
-<tr v-for="p in placements" :key="p.company + p.position">
-
-    <td>{{ p.company }}</td>
-    <td>{{ p.position }}</td>
-    <td>{{ p.salary }}</td>
-    <td>{{ p.joining_date }}</td>
-
-</tr>
-
-</tbody>
-</table>
-
-<p>{{ message }}</p>
-
-<button @click="$router.back()">Back</button>
 
 </template>
 
@@ -45,7 +49,7 @@ export default {
     async mounted() {
 
         let response = await fetch(
-            "http://127.0.0.1:5000/student/placements",
+            "http://localhost:5000/student/placements",
             {
                 headers: {
                     "Authorization":
@@ -57,7 +61,7 @@ export default {
 
         let data = await response.json()
 
-        if (response.status == 401 && data.msg == "Token has expired") {
+        if (data.msg == "Token has expired") {
 
             alert("Session expired. Please login again.")
             localStorage.removeItem("token")

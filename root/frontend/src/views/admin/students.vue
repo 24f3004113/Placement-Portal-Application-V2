@@ -7,54 +7,59 @@
 
     <br><br>
 
-    <table border="1">
+    <div class="container my-5 shadow p-2 ">
+        <div class="table-responsive-md">
+            <table class="table table-striped  table-bordered table-hover ">
 
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Phone</th>
-                <th>Course</th>
-                <th>CGPA</th>
-                <th>Graduation Year</th>
-                <th>Skills</th>
-                <th>Blacklist Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Phone</th>
+                        <th>Course</th>
+                        <th>CGPA</th>
+                        <th>Graduation Year</th>
+                        <th>Skills</th>
+                        <th>Blacklist Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
 
-        <tbody>
+                <tbody>
 
-            <tr v-if="students.length == 0">
-                <td colspan="10">No students found</td>
-            </tr>
+                    <tr v-if="students.length == 0">
+                        <td colspan="10">No students found</td>
+                    </tr>
 
-            <tr v-else v-for="student in students" :key="student.sid">
-                <td>{{ student.sid }}</td>
-                <td>{{ student.name }}</td>
-                <td>{{ student.email }}</td>
-                <td>{{ student.phone }}</td>
-                <td>{{ student.course }}</td>
-                <td>{{ student.cgpa }}</td>
-                <td>{{ student.graduation_year }}</td>
-                <td>{{ student.skills }}</td>
-                <td>{{ student.blacklisted ? "Blocked" : "Not Blocked" }}</td>
+                    <tr v-else v-for="student in students" :key="student.sid">
+                        <td>{{ student.sid }}</td>
+                        <td>{{ student.name }}</td>
+                        <td>{{ student.email }}</td>
+                        <td>{{ student.phone }}</td>
+                        <td>{{ student.course }}</td>
+                        <td>{{ student.cgpa }}</td>
+                        <td>{{ student.graduation_year }}</td>
+                        <td>{{ student.skills }}</td>
+                        <td>{{ student.blacklisted ? "Blocked" : "Not Blocked" }}</td>
 
-                <td>
+                        <td>
 
 
-                    <button @click="$router.push('/admin/student/' + student.sid)">View Student</button>
+                            <button @click="$router.push('/admin/student/' + student.sid)">View Student</button>
 
-                    <button @click="$router.push('/admin/student/' + student.sid + '/applications')">View Applications</button>
-                    <button v-if="!student.blacklisted" @click="blacklist(student.sid)">Block</button>
-                    <button v-else @click="unblacklist(student.sid)">Unblock</button>
-                </td>
-            </tr>
+                            <button @click="$router.push('/admin/student/' + student.sid + '/applications')">View
+                                Applications</button>
+                            <button v-if="!student.blacklisted" @click="blacklist(student.sid)">Block</button>
+                            <button v-else @click="unblacklist(student.sid)">Unblock</button>
+                        </td>
+                    </tr>
 
-        </tbody>
+                </tbody>
 
-    </table>
+            </table>
+        </div>
+    </div>
 
 </template>
 
@@ -74,7 +79,7 @@ export default {
         async getStudents() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/admin/students?search=" + this.search,
+                "http://localhost:5000/admin/students?search=" + this.search,
                 {
                     headers: {
                         "Authorization": "Bearer " + localStorage.getItem("token")
@@ -83,6 +88,13 @@ export default {
             )
 
             this.students = await response.json()
+
+            if ( data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
 
         },
 
@@ -94,7 +106,7 @@ export default {
         async blacklist(sid) {
 
             await fetch(
-                "http://127.0.0.1:5000/admin/student/" + sid + "/blacklist",
+                "http://localhost:5000/admin/student/" + sid + "/blacklist",
                 {
                     method: "PUT",
                     headers: {
@@ -110,7 +122,7 @@ export default {
         async unblacklist(sid) {
 
             await fetch(
-                "http://127.0.0.1:5000/admin/student/" + sid + "/unblacklist",
+                "http://localhost:5000/admin/student/" + sid + "/unblacklist",
                 {
                     method: "PUT",
                     headers: {

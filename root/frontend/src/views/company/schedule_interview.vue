@@ -1,8 +1,11 @@
 <template>
 
-    <h2>Schedule Interview</h2>
+    <h2 class="text-center">Student Profile</h2>
 
-    <table border="1" v-if="application">
+    <div class="container mt-4">
+        <div class="row justify-content-center">
+            <div class="col-md-8">
+                <table class="table table-bordered " v-if="application">
         <tbody>
             <tr>
                 <td>Student</td>
@@ -40,51 +43,85 @@
             </tr>
         </tbody>
     </table>
+                </div>
+        </div>
+    </div>
 
     <br>
 
-    <form @submit.prevent="scheduleInterview">
+ <div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
 
-        <label>Interview Date</label>
-        <input type="date" v-model="form.interview_date" required>
+            <h2 class="text-center">Schedule Interview</h2>
 
-        <br><br>
+            <form @submit.prevent="scheduleInterview" class="form-control">
 
-        <label>Interview Time</label>
-        <input type="time" v-model="form.interview_time" required>
+                <div class="mb-3">
+                    <label class="form-label">Interview Date</label>
+                    <input type="date" v-model="form.interview_date"
+                        class="form-control" required>
+                </div>
 
-        <br><br>
+                <div class="mb-3">
+                    <label class="form-label">Interview Time</label>
+                    <input type="time" v-model="form.interview_time"
+                        class="form-control" required>
+                </div>
 
-        <label>Interview Mode</label>
-        <select v-model="form.interview_mode" required>
-            <option value="">Select Mode</option>
-            <option value="Online">Online</option>
-            <option value="Offline">Offline</option>
-        </select>
+                <div class="mb-3">
+                    <label class="form-label">Interview Mode</label>
+                    <select v-model="form.interview_mode"
+                        class="form-select" required>
+                        <option value="">Select Mode</option>
+                        <option value="Online">Online</option>
+                        <option value="Offline">Offline</option>
+                    </select>
+                </div>
 
-        <br><br>
+                <div class="mb-3">
+                    <label class="form-label">Interview Link</label>
+                    <input type="text" v-model="form.interview_link"
+                        class="form-control">
+                </div>
 
-        <label>Interview Link</label>
-        <input type="text" v-model="form.interview_link">
+                <div class="mb-3">
+                    <label class="form-label">Interview Location</label>
+                    <input type="text" v-model="form.interview_location"
+                        class="form-control">
+                </div>
 
-        <br><br>
+                <div class="mb-3">
+                    <label class="form-label">Remarks</label>
+                    <textarea v-model="form.remarks"
+                        class="form-control"></textarea>
+                </div>
 
-        <label>Interview Location</label>
-        <input type="text" v-model="form.interview_location">
+                <div class="text-center">
+                    <button type="submit"
+                        class="bg-success btn shadow text-white me-2">
+                        Schedule Interview
+                    </button>
 
-        <br><br>
+                    <button type="button" class="btn btn-secondary"
+                        @click="$router.back()">Cancel</button>
+                </div>
 
-        <label>Remarks</label>
-        <textarea v-model="form.remarks"></textarea>
+            </form>
 
-        <br><br>
+            <p class="text-center mt-3">{{ message }}</p>
 
-        <button type="submit">Schedule Interview</button>
-        <button type="button" @click="$router.back()">Cancel</button>
+            <div class="text-center mt-3">
+                <button class="btn btn-secondary me-2"
+                    @click="$router.back()">Back</button>
 
-    </form>
+                <button class="bg-danger btn shadow text-white"
+                    @click="$router.push('/logout')">Logout</button>
+            </div>
 
-    <p>{{ message }}</p>
+        </div>
+    </div>
+</div>
 
 </template>
 
@@ -114,7 +151,7 @@ export default {
         async getApplication() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/company/application/" +
+                "http://localhost:5000/company/application/" +
                 this.$route.params.aid,
                 {
                     headers: {
@@ -127,6 +164,13 @@ export default {
 
             let data = await response.json()
 
+            if ( data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
+
             if (response.ok)
                 this.application = data
             else
@@ -137,7 +181,7 @@ export default {
         async scheduleInterview() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/company/application/" +
+                "http://localhost:5000/company/application/" +
                 this.$route.params.aid +
                 "/interview",
                 {
@@ -153,6 +197,13 @@ export default {
             )
 
             let data = await response.json()
+
+            if ( data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
 
             this.message = data.message
 

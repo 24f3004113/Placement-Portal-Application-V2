@@ -2,48 +2,90 @@
 
     <h2>Student Applications</h2>
 
-    <p>Student: {{ student }}</p>
-    <p>Email: {{ email }}</p>
-    <p>Phone No.: {{ phone }}</p>
-    <p>Course: {{ course }}</p>
-    <p>CGPA: {{ cgpa }}</p>
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
 
-    <table border="1">
+                <table class="table table-bordered table-hover shadow">
 
-        <thead>
-            <tr>
-                <th>ID</th>
-                <th>Company</th>
-                <th>Job Title</th>
-                <th>Application Date</th>
-                <th>Status</th>
-                <th>Action</th>
-            </tr>
-        </thead>
+                    <tbody>
 
-        <tbody>
 
-            <tr v-if="applications.length == 0">
-                <td colspan="5">No applications found</td>
-            </tr>
+                        <tr>
+                            <td>Student</td>
+                            <td>{{ student }}</td>
+                        </tr>
+                        <tr>
+                            <td>Email</td>
+                            <td>{{ email }}</td>
+                        </tr>
+                        <tr>
+                            <td>Phone No.</td>
+                            <td>{{ phone }}</td>
+                        </tr>
+                        <tr>
+                            <td>Course</td>
+                            <td>{{ course }}</td>
+                        </tr>
 
-            <tr v-for="application in applications" :key="application.aid">
 
-                <td>{{ application.aid }}</td>
-                <td>{{ application.company }}</td>
-                <td>{{ application.job_title }}</td>
-                <td>{{ application.application_date }}</td>
-                <td>{{ application.status }}</td>
-                <td>
-                    <button @click="$router.push('/admin/student/' + application.sid)">View Student</button>
-                    <button @click="$router.push('/admin/application/' + application.aid + '/history')">History</button>
-                </td>
+                        <tr>
+                            <td>CGPA</td>
+                            <td>{{ cgpa }}</td>
+                        </tr>
 
-            </tr>
 
-        </tbody>
 
-    </table>
+
+
+                    </tbody>
+
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div class="container my-5 shadow p-2 ">
+        <div class="table-responsive-md">
+            <table class="table table-striped  table-bordered table-hover ">
+
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Company</th>
+                        <th>Job Title</th>
+                        <th>Application Date</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    <tr v-if="applications.length == 0">
+                        <td colspan="5">No applications found</td>
+                    </tr>
+
+                    <tr v-for="application in applications" :key="application.aid">
+
+                        <td>{{ application.aid }}</td>
+                        <td>{{ application.company }}</td>
+                        <td>{{ application.job_title }}</td>
+                        <td>{{ application.application_date }}</td>
+                        <td>{{ application.status }}</td>
+                        <td>
+                            <button @click="$router.push('/admin/student/' + application.sid)">View Student</button>
+                            <button
+                                @click="$router.push('/admin/application/' + application.aid + '/history')">History</button>
+                        </td>
+
+                    </tr>
+
+                </tbody>
+
+            </table>
+        </div>
+    </div>
 
     <br>
 
@@ -74,7 +116,7 @@ export default {
         async getApplications() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/admin/student/" +
+                "http://localhost:5000/admin/student/" +
                 this.$route.params.sid +
                 "/applications",
                 {
@@ -88,12 +130,19 @@ export default {
 
             let data = await response.json()
 
+            if ( data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
+
             if (response.ok) {
                 this.student = data.student
                 this.email = data.email
                 this.phone = data.phone,
-                    this.course = data.course,
-                    this.cgpa = data.cgpa
+                this.course = data.course,
+                this.cgpa = data.cgpa
                 this.applications = data.applications
             } else {
                 this.message = data.message

@@ -7,7 +7,9 @@
 
     <br><br>
 
-    <table border="1">
+     <div class="container my-5 shadow p-2 ">
+        <div class="table-responsive-md">
+            <table class="table table-striped  table-bordered table-hover ">
 
         <thead>
             <tr>
@@ -52,7 +54,9 @@
 
         </tbody>
 
-    </table>
+                </table>
+            </div>
+        </div>
 
     <p>{{ message }}</p>
 
@@ -75,7 +79,7 @@ export default {
         async getApplications() {
 
             let response = await fetch(
-                "http://127.0.0.1:5000/admin/applications?search=" +
+                "http://localhost:5000/admin/applications?search=" +
                 encodeURIComponent(this.search),
                 {
                     headers: {
@@ -87,6 +91,14 @@ export default {
             )
 
             let data = await response.json()
+
+            if ( data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
+
 
             if (response.ok) {
                 this.applications = data

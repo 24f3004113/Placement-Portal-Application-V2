@@ -1,91 +1,132 @@
 <template>
 
-<h2>Create Placement Drive</h2>
+ <div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
+            <h2 class="text-center">Create Placement Drive</h2>
 
-<form @submit.prevent="createDrive">
+            <form @submit.prevent="createDrive">
 
-<label>Job Title</label>
-<input type="text" placeholder="Job Title" v-model="form.job_title" required>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Job Title</label>
+                    <input type="text" class="form-control" placeholder="Job Title"
+                        v-model="form.job_title" required>
+                </div>
 
-<label>Description</label>
-<textarea placeholder="Description" v-model="form.description" required></textarea>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Description</label>
+                    <textarea class="form-control" placeholder="Description"
+                        v-model="form.description" required></textarea>
+                </div>
 
-<label>Required Courses </label>
-<input type="text" placeholder="Course" v-model="form.course" required>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Required Courses </label>
+                    <input type="text" class="form-control" placeholder="Course"
+                        v-model="form.course" required>
+                </div>
 
-<label>Required Minimum CGPA </label>
-<input type="number" step="0.01" placeholder="Minimum CGPA" v-model="form.min_cgpa" required>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Required Minimum CGPA </label>
+                    <input type="number" step="0.01" class="form-control"
+                        placeholder="Minimum CGPA" v-model="form.min_cgpa" required>
+                </div>
 
-<label>Required Graduation Year</label>
-<input type="number" placeholder="Graduation Year" v-model="form.graduation_year" required >
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Required Graduation Year</label>
+                    <input type="number" class="form-control"
+                        placeholder="Graduation Year" v-model="form.graduation_year" required>
+                </div>
 
-<label>Offering Salary</label>
-<input type="number" placeholder="Salary" v-model="form.salary" required>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Offering Salary</label>
+                    <input type="number" class="form-control"
+                        placeholder="Salary" v-model="form.salary" required>
+                </div>
 
-<label>Application Deadline</label>
-<input type="date" v-model="form.application_deadline" required>
-<br><br>
+                <div class="mb-3">
+                    <label class="form-label">Application Deadline</label>
+                    <input type="date" class="form-control"
+                        v-model="form.application_deadline" required>
+                </div>
 
-<button type="submit">Create Drive</button>
-<button type="button" @click="$router.back()">Cancel</button>
+                <div class="text-center">
+                    <button type="submit" class="bg-success btn shadow text-white me-2">
+                        Create Drive
+                    </button>
+                    <button type="button" class="btn btn-secondary"
+                        @click="$router.back()">Cancel</button>
+                </div>
 
-</form>
+            </form>
 
-<p>{{ message }}</p>
+            <p class="text-center mt-3">{{ message }}</p>
+
+            <div class="text-center mt-3">
+                <button class="btn btn-secondary me-2" @click="$router.back()">Back</button>
+                <button class="bg-danger btn shadow text-white"
+                    @click="$router.push('/logout')">Logout</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 
 </template>
 
 <script>
 
-export default{
+export default {
 
-    data(){
+    data() {
 
-        return{
-            form:{
-                job_title:"",
-                description:"",
-                course:"",
-                min_cgpa:"",
-                graduation_year:"",
-                salary:"",
-                application_deadline:""
+        return {
+            form: {
+                job_title: "",
+                description: "",
+                course: "",
+                min_cgpa: "",
+                graduation_year: "",
+                salary: "",
+                application_deadline: ""
             },
-            message:""
+            message: ""
         }
 
     },
 
-    methods:{
+    methods: {
 
-        async createDrive(){
+        async createDrive() {
 
-            let response=await fetch(
-                "http://127.0.0.1:5000/company/create_drive",
+            let response = await fetch(
+                "http://localhost:5000/company/create_drive",
                 {
-                    method:"POST",
-                    headers:{
-                        "Content-Type":"application/json",
-                        "Authorization":"Bearer "+localStorage.getItem("token")
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json",
+                        "Authorization": "Bearer " + localStorage.getItem("token")
                     },
 
                     credentials: "include",
-                    
-                    body:JSON.stringify(this.form)
+
+                    body: JSON.stringify(this.form)
                 }
             )
 
-            let data=await response.json()
+            let data = await response.json()
 
-            this.message=data.message
+            if ( data.msg == "Token has expired") {
+                alert("Session expired. Please login again.")
+                localStorage.removeItem("token")
+                this.$router.push("/")
+                return
+            }
 
-            if(response.ok){
+            this.message = data.message
+
+            if (response.ok) {
                 this.$router.push("/company")
             }
 

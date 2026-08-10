@@ -1,49 +1,54 @@
 <template>
+<div class="container my-5 shadow p-2">
+    <h2 class="text-center">My Interviews</h2>
 
-    <h2>My Interviews</h2>
+    <div class="table-responsive-md">
+        <table class="table table-striped table-bordered table-hover">
+            <tbody>
+                <tr>
+                    <th>Company</th>
+                    <th>Job Title</th>
+                    <th>Date</th>
+                    <th>Time</th>
+                    <th>Mode</th>
+                    <th>Link</th>
+                    <th>Location</th>
+                    <th>Remarks</th>
+                </tr>
 
-    <table border="1">
+                <tr v-for="i in interviews" :key="i.iid">
+                    <td>{{ i.company }}</td>
+                    <td>{{ i.job_title }}</td>
+                    <td>{{ i.date }}</td>
+                    <td>{{ i.time }}</td>
+                    <td>{{ i.mode }}</td>
 
-        <tbody>
+                    <td>
+                        <a v-if="i.link"
+                            :href="i.link.startsWith('http') ? i.link : 'https://' + i.link"
+                            target="_blank">
+                            Join Interview
+                        </a>
+                        <span v-else>N/A</span>
+                    </td>
 
-            <tr>
-                <th>Company</th>
-                <th>Job Title</th>
-                <th>Date</th>
-                <th>Time</th>
-                <th>Mode</th>
-                <th>Link</th>
-                <th>Location</th>
-                <th>Remarks</th>
-            </tr>
+                    <td>{{ i.location || "N/A" }}</td>
+                    <td>{{ i.remarks || "N/A" }}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
 
-            <tr v-for="i in interviews" :key="i.iid">
+    <p class="text-center">{{ message }}</p>
 
-                <td>{{ i.company }}</td>
-                <td>{{ i.job_title }}</td>
-                <td>{{ i.date }}</td>
-                <td>{{ i.time }}</td>
-                <td>{{ i.mode }}</td>
+    <div class="text-center mt-3">
+        <button class="btn btn-secondary me-2"
+            @click="$router.back()">Back</button>
 
-                <td>
-                    <a v-if="i.link" :href="i.link.startsWith('http') ? i.link : 'https://' + i.link" target="_blank">
-                        Join Interview
-                    </a>
-                    <span v-else>N/A</span>
-                </td>
-
-                <td>{{ i.location || "N/A" }}</td>
-                <td>{{ i.remarks || "N/A" }}</td>
-
-            </tr>
-
-        </tbody>
-
-    </table>
-
-    <p>{{ message }}</p>
-
-    <button @click="$router.back()">Back</button>
+        <button class="bg-danger btn shadow text-white"
+            @click="$router.push('/logout')">Logout</button>
+    </div>
+</div>
 
 </template>
 
@@ -61,7 +66,7 @@ export default {
     async mounted() {
 
         let response = await fetch(
-            "http://127.0.0.1:5000/student/interviews",
+            "http://localhost:5000/student/interviews",
             {
                 headers: {
                     "Authorization":
@@ -73,7 +78,7 @@ export default {
 
         let data = await response.json()
 
-        if (response.status == 401 && data.msg == "Token has expired") {
+        if ( data.msg == "Token has expired") {
             alert("Session expired. Please login again.")
             localStorage.removeItem("token")
             this.$router.push("/")

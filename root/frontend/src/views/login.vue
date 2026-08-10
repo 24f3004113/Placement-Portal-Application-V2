@@ -1,32 +1,44 @@
 <template>
 
 
-    <h2>Placement Portal</h2>
+<h2 class="text-center">Placement Portal</h2>
 
-    <form @submit.prevent="login">
+<h3 class="text-center"> Login </h3>
 
-        <label>Email</label>
-        <input type="email" placeholder="Email" v-model="form.email" required>
+<div class="container mt-5">
+    <div class="row justify-content-center">
+        <div class="col-md-5">
 
-        <br><br>
+            <form @submit.prevent="login" class="form-control">
+                <div class="mb-3">
+                    <label class="form-label">Email</label>
+                    <input type="email" class="form-control" placeholder="Email"
+                        v-model="form.email" required>
+                </div>
 
-        <label>Password</label>
-        <input type="password" placeholder="Password" v-model="form.password" required>
+                <div class="mb-3">
+                    <label class="form-label">Password</label>
+                    <input type="password" class="form-control" placeholder="Password"
+                        v-model="form.password" required>
+                </div>
 
-        <br><br>
+                <div class="text-center">
+                    <button type="submit" class="bg-success btn shadow text-white">Login</button>
+                </div>
+            </form>
 
-        <button type="submit">Login</button>
+            <div class="text-center mt-3">
+                <button class="btn btn-primary me-2"
+                    @click="$router.push('/student/register')">Student Register</button>
+                <button class="btn btn-primary"
+                    @click="$router.push('/company/register')">Company Register</button>
+            </div>
 
-    </form>
+            <p class="text-center mt-3">{{ message }}</p>
 
-    <br>
-
-    <button @click="$router.push('/student/register')">Student Register</button>
-    <button @click="$router.push('/company/register')">Company Register</button>
-
-    <br><br>
-
-    <p>{{ message }}</p>
+        </div>
+    </div>
+</div>
 
 </template>
 
@@ -51,7 +63,7 @@ export default {
 
         async login() {
 
-            let response = await fetch("http://127.0.0.1:5000/login", {
+            let response = await fetch("http://localhost:5000/login", {
 
                 method: "POST",
 
